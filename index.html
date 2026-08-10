@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FC Ik Dien - Zaterdag Flash</title>
+    <style>
+        /* --- 1. SCREEN STYLING (How it looks on your monitor) --- */
+        :root {
+            --flash-purple: #5c4b82; /* The purple text color from the screenshot */
+            --flash-grey: #e6e6e6;   /* The light gray header background */
+            --text-dark: #000000;
+        }
+        
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #f4f6f8; 
+            margin: 0; 
+            padding: 20px; 
+            color: var(--text-dark);
+            font-size: 13px; /* Slightly smaller text for dense table layouts */
+        }
+
+        .no-print-area {
+            max-width: 950px;
+            margin: 0 auto 20px auto;
+            box-sizing: border-box;
+            text-align: center; 
+            background-color: #5c4b82; 
+            color: white;
+            padding: 20px; 
+            border-radius: 10px; 
+        }
+
+        select, button { 
+            padding: 8px 15px; 
+            font-size: 1em; 
+            border-radius: 5px; 
+            border: 1px solid #ccc; 
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        button {
+            background-color: #ffffff;
+            color: #5c4b82;
+            font-weight: bold;
+        }
+
+        /* --- 2. HEADER BANNER STYLING --- */
+        .header-banner {
+            max-width: 950px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            border: 1px solid black;
+            padding: 10px 15px;
+            background: white;
+            box-sizing: border-box;
+        }
+
+        .header-banner img {
+            height: 60px;
+            width: auto;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .header-banner img[alt="Ik Dien - One Team"] {
+            height: auto;
+            width: 300px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .header-title {
+            flex: 1;
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--flash-purple);
+            white-space: nowrap;
+        }
+
+        /* --- 3. TABLE STYLING (Replicating the screenshot) --- */
+        .match-list { max-width: 950px; margin: 0 auto; background: white; }
+
+        /* --- FOOTER BANNER STYLING --- */
+        .footer-banner {
+            max-width: 950px;
+            margin: 0 auto 20px auto;
+            text-align: center;
+            border: 1px solid black;
+            padding: 10px 15px;
+            background: white;
+            box-sizing: border-box;
+        }
+
+        .footer-banner img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .date-title-bar {
+            background-color: var(--flash-grey);
+            color: var(--flash-purple);
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            border: 1px solid black;
+            border-bottom: none;
+            margin-top: 20px;
+        }
+
+        .flash-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid black;
+            margin-bottom: 30px;
+        }
+
+        .flash-table th, .flash-table td {
+            padding: 6px 10px;
+            text-align: left;
+            border-bottom: 1px solid #000; /* Dark lines between rows */
+        }
+
+        .field-header-row th {
+            background-color: var(--flash-grey);
+            color: var(--flash-purple);
+            font-weight: normal;
+            border-top: 2px solid black;
+            border-bottom: 2px solid black;
+        }
+
+        /* Center the time and locker room columns */
+        .center-text { text-align: center !important; }
+
+        /* Hide the header banner on small/mobile screens (still shown when printing) */
+        @media screen and (max-width: 768px) {
+            .header-banner { display: none; }
+        }
+
+        /* --- 4. PRINT STYLING (Optimizing for A4 Paper) --- */
+        @media print {
+            @page { 
+                size: A4 portrait; 
+                margin: 1cm; /* Standard print margins */
+            }
+            body { 
+                background-color: white; 
+                margin: 0; 
+                padding: 0; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+            }
+            /* Hide the controls (dropdowns, buttons) when printing */
+            .no-print-area { display: none !important; }
+            
+            /* Prevent the table from breaking awkwardly across pages */
+            .flash-table { page-break-inside: auto; }
+            tr { page-break-inside: avoid; page-break-after: auto; }
+            .field-header-row { page-break-before: auto; }
+            
+            /* Ensure it spans the full width of the A4 sheet */
+            .match-list { max-width: 100%; }
+
+            /* Keep the header banner intact and full width when printing */
+            .header-banner { max-width: 100%; page-break-inside: avoid; page-break-after: avoid; }
+
+            /* Keep the footer banner intact and full width when printing */
+            .footer-banner { max-width: 100%; page-break-inside: avoid; page-break-before: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- This section will be completely hidden when you print -->
+    <div class="no-print-area">
+        <div>
+            <label for="week-selector"><strong>Selecteer Flash: </strong></label>
+            <select id="week-selector"></select>
+            <button onclick="window.print()">🖨️ Afdrukken</button>
+        </div>
+    </div>
+    
+    <!-- This is the area that will be printed -->
+    <div class="header-banner">
+        <img src="grassroots.jpeg" alt="Grassroots">
+        <img src="ikdien.jpeg" alt="Ik Dien">
+        <img src="ikdien-oneteam.png" alt="Ik Dien - One Team">
+        <img src="ikdien.jpeg" alt="Ik Dien">
+        <img src="grassroots.jpeg" alt="Grassroots">
+    </div>
+
+    <div id="match-list" class="match-list">
+        <p style="text-align: center;">Loading matches...</p>
+    </div>
+
+    <div class="footer-banner">
+        <img src="sponsors.png" alt="Sponsors">
+    </div>
+
+    <script>
+        // Formats dates for the server request
+        function formatDateForServer(date) {
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        // Fills the dropdown menu with weeks, each split into 4 entries:
+        // Midweek Flash (Mon-Thu), Vrijdag Flash, Zaterdag Flash, Zondag Flash
+        function generateWeeks() {
+            const selector = document.getElementById('week-selector');
+            let currentMonday = new Date(2026, 7, 10); // August 10, 2026
+            const shortOptions = { month: 'short', day: 'numeric' };
+
+            for (let i = 0; i < 20; i++) {
+                const monday = new Date(currentMonday);
+
+                const thursday = new Date(monday);
+                thursday.setDate(monday.getDate() + 3);
+
+                const friday = new Date(monday);
+                friday.setDate(monday.getDate() + 4);
+
+                const saturday = new Date(monday);
+                saturday.setDate(monday.getDate() + 5);
+
+                const sunday = new Date(monday);
+                sunday.setDate(monday.getDate() + 6);
+
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = `${monday.toLocaleDateString('nl-BE', shortOptions)} - ${sunday.toLocaleDateString('nl-BE', shortOptions)}`;
+
+                const entries = [
+                    { label: `Midweek Flash (${monday.toLocaleDateString('nl-BE', shortOptions)} - ${thursday.toLocaleDateString('nl-BE', shortOptions)})`, start: monday, end: thursday },
+                    { label: `Vrijdag Flash (${friday.toLocaleDateString('nl-BE', shortOptions)})`, start: friday, end: friday },
+                    { label: `Zaterdag Flash (${saturday.toLocaleDateString('nl-BE', shortOptions)})`, start: saturday, end: saturday },
+                    { label: `Zondag Flash (${sunday.toLocaleDateString('nl-BE', shortOptions)})`, start: sunday, end: sunday },
+                ];
+
+                entries.forEach(entry => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = `${formatDateForServer(entry.start)}|${formatDateForServer(entry.end)}`;
+                    optionElement.text = entry.label;
+                    optgroup.appendChild(optionElement);
+                });
+
+                selector.appendChild(optgroup);
+
+                currentMonday.setDate(currentMonday.getDate() + 7);
+            }
+        }
+
+        // Maps RBFA pitch codes to our internal field names
+        const pitchCodeToFieldName = {
+            1: 'A-KGV',
+            2: 'B-KGV',
+            3: 'C',
+        };
+
+        // YOUR LIST OF TEAMS
+        const teamConfig = [
+            { teamId: "364085", internalName: "Dames 1"},
+            { teamId: "364484", internalName: "Dames 2"},
+
+            { teamId: "364477", internalName: "Heren 1"},
+            { teamId: "364485", internalName: "Heren 2"},
+            { teamId: "367644", internalName: "Heren 3"},
+            { teamId: "367646", internalName: "Heren 4"},
+            { teamId: "367645", internalName: "Heren 5"},
+            { teamId: "367649", internalName: "Heren 6"},
+            { teamId: "367647", internalName: "Heren 7"},
+            { teamId: "364486", internalName: "Heren 8"},
+            { teamId: "380941", internalName: "Heren 9"},
+            { teamId: "367648", internalName: "Heren 10"},
+
+            { teamId: "364487", internalName: "Veteranen"},
+        ];
+
+        // Fetches all team calendars directly from the RBFA API, filters them down to our
+        // club's home games within the requested date range, removes duplicates, and only
+        // then enriches the remaining (much smaller) list with their field name.
+        async function fetchRbfaMatches(startDate, endDate) {
+            const myStartDate = new Date(`${startDate}T00:00:00`);
+            const myEndDate = new Date(`${endDate}T23:59:59`);
+
+            // 1. Fetch data for ALL teams at the same time using Promise.all
+            const fetchPromises = teamConfig.map(async (team) => {
+                const getTeamCalendarUrl = `https://datalake-prod2018.rbfa.be/graphql?operationName=GetTeamCalendar&variables={"teamId":"${team.teamId}","language":"nl","sortByDate":"asc"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"3f0441e6723b9852b4f0cff2c872f4aa674c5de2d23589efc70c7a4ffb7f6383"}}`;
+
+                try {
+                    const response = await fetch(getTeamCalendarUrl);
+                    const data = await response.json();
+
+                    if (data && data.data && data.data.teamCalendar) {
+                        return data.data.teamCalendar.map(match => ({
+                            ...match,
+                            internalName: team.internalName,
+                        }));
+                    }
+                } catch (err) {
+                    console.error(`Failed to fetch team ${team.teamId}:`, err);
+                }
+                return [];
+            });
+
+            const results = await Promise.all(fetchPromises);
+
+            // 2. Combine all the separate lists into one massive list
+            const allMatches = results.flat();
+
+            // 3. Filter the massive list using the dynamic dates, BEFORE enriching with match details.
+            const filteredMatches = allMatches.filter(match => {
+                if (!match.startTime) return false;
+
+                const matchDate = new Date(match.startTime);
+                const isWithinDates = (matchDate >= myStartDate && matchDate <= myEndDate);
+                const isHomeGame = (match.homeTeam && match.homeTeam.clubId === "8175");
+
+                return isWithinDates && isHomeGame;
+            });
+
+            // 4. Remove duplicate matches (same id), keeping only the first occurrence
+            const seenMatchIds = new Set();
+            const uniqueMatches = filteredMatches.filter(match => {
+                if (seenMatchIds.has(match.id)) return false;
+                seenMatchIds.add(match.id);
+                return true;
+            });
+
+            // 5. Only NOW enrich the (already filtered) matches with their field name
+            const enrichedMatches = await Promise.all(uniqueMatches.map(async match => {
+                const getMatchDetailUrl = `https://datalake-prod2018.rbfa.be/graphql?operationName=GetMatchDetail&variables={"matchId":"${match.id}","language":"nl"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"cd8867b845c206fe7aa75c1ebf7b53cbda0ff030253a45e2e2b4bcc13ee46c9a"}}`;
+
+                try {
+                    const matchResponse = await fetch(getMatchDetailUrl);
+                    const matchData = await matchResponse.json();
+
+                    const pitchCode = matchData.data.matchDetail ? matchData.data.matchDetail.location.pitchCode : null;
+
+                    return {
+                        ...match,
+                        fieldName: pitchCodeToFieldName[pitchCode] || null
+                    };
+                } catch (err) {
+                    console.error(`Failed to fetch match detail for match ${match.id}:`, err);
+                    return { ...match, fieldName: null };
+                }
+            }));
+
+            // 6. Sort the matches chronologically (earliest first)
+            enrichedMatches.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+
+            return enrichedMatches;
+        }
+
+        // Fetches and formats the matches based on the screenshot layout
+        async function fetchMatches(startDate, endDate) {
+            const listContainer = document.getElementById('match-list');
+            listContainer.innerHTML = '<p style="text-align: center;">Loading matches...</p>';
+
+            try {
+                const newUrl = `?start=${startDate}&end=${endDate}`;
+                window.history.pushState({ path: newUrl }, '', newUrl);
+
+                const matches = await fetchRbfaMatches(startDate, endDate);
+
+                listContainer.innerHTML = ''; 
+
+                if (!matches || matches.length === 0) {
+                    listContainer.innerHTML = '<p style="text-align: center; margin-top: 50px;">Geen thuiswedstrijden gevonden.</p>';
+                    return;
+                }
+
+                // 1. Group the matches by DATE first, then by FIELD
+                const groupedMatches = {};
+
+                matches.forEach(match => {
+                    if (!match.startTime) return;
+
+                    const matchDateObj = new Date(match.startTime);
+                    const dateKey = match.startTime.split('T')[0]; 
+                    
+                    // Translate date to Dutch/Belgian format as seen in the screenshot (e.g., Zaterdag Flash (25/04/2026))
+                    const dayName = matchDateObj.toLocaleDateString('nl-BE', { weekday: 'long' });
+                    // Capitalize the first letter of the day
+                    const dayNameCap = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+                    const dateFormatted = matchDateObj.toLocaleDateString('nl-BE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    const displayDate = `${dayNameCap} Flash (${dateFormatted})`;
+
+                    const fieldName = match.fieldName ? match.fieldName : 'Onbekend terrein';
+
+                    if (!groupedMatches[dateKey]) {
+                        groupedMatches[dateKey] = {
+                            displayDate: displayDate,
+                            fields: {}
+                        };
+                    }
+
+                    if (!groupedMatches[dateKey].fields[fieldName]) {
+                        groupedMatches[dateKey].fields[fieldName] = [];
+                    }
+
+                    groupedMatches[dateKey].fields[fieldName].push(match);
+                });
+
+                // 2. Draw the layout perfectly matching the screenshot
+                const sortedDateKeys = Object.keys(groupedMatches).sort();
+
+                sortedDateKeys.forEach(dateKey => {
+                    const dateGroup = groupedMatches[dateKey];
+
+                    // Draw the large purple/grey header for the day
+                    const dateTitle = document.createElement('div');
+                    dateTitle.className = 'date-title-bar';
+                    dateTitle.textContent = dateGroup.displayDate;
+                    listContainer.appendChild(dateTitle);
+
+                    // Create one big table for the whole day
+                    const table = document.createElement('table');
+                    table.className = 'flash-table';
+                    const tbody = document.createElement('tbody');
+                    table.appendChild(tbody);
+
+                    const sortedFieldNames = Object.keys(dateGroup.fields).sort();
+
+                    sortedFieldNames.forEach(fieldName => {
+                        // Create the sub-header row for each field
+                        const fieldHeaderRow = document.createElement('tr');
+                        fieldHeaderRow.className = 'field-header-row';
+                        fieldHeaderRow.innerHTML = `
+                            <th>Terrein ${fieldName}</th>
+                            <th>Thuisploeg</th>
+                            <th>Bezoekers</th>
+                            <th class="center-text">uur</th>
+                            <th class="center-text">cabines<br>Ik Dien</th>
+                            <th class="center-text">cabines<br>Bezoekers</th>
+                        `;
+                        tbody.appendChild(fieldHeaderRow);
+
+                        // Loop through matches for this field
+                        dateGroup.fields[fieldName].forEach(match => {
+                            const tr = document.createElement('tr');
+                            
+                            // Determine names
+                            const seriesName = match.series ? match.series.name : '';
+                            const internalName = match.internalName ? match.internalName : (match.homeTeam ? match.homeTeam.name : 'Unknown');
+                            const awayTeamName = match.awayTeam ? match.awayTeam.name : 'Unknown';
+                            
+                            // Extract just the time (e.g., 9:00 instead of 09:00 to match screenshot exactly)
+                            const matchTimeObj = new Date(match.startTime);
+                            const hours = matchTimeObj.getHours();
+                            const minutes = String(matchTimeObj.getMinutes()).padStart(2, '0');
+                            const timeText = `${hours}:${minutes}`;
+
+                            // Placeholders for locker rooms
+                            const cabineHome = '-';
+                            const cabineAway = '-';
+
+                            // Combine the internal name and series if needed, or just map them to the columns
+                            tr.innerHTML = `
+                                <td>${seriesName}</td>
+                                <td>${internalName}</td>
+                                <td>${awayTeamName}</td>
+                                <td class="center-text">${timeText}</td>
+                                <td class="center-text">${cabineHome}</td>
+                                <td class="center-text">${cabineAway}</td>
+                            `;
+                            
+                            tbody.appendChild(tr);
+                        });
+                    });
+                    
+                    listContainer.appendChild(table);
+                });
+
+            } catch (error) {
+                console.error("Error fetching matches:", error);
+                listContainer.innerHTML = '<p style="text-align: center; margin-top: 50px;">An error occurred while loading the matches.</p>';
+            }
+        }
+
+        // Setup page controls
+        generateWeeks(); 
+
+        const selector = document.getElementById('week-selector');
+        selector.addEventListener('change', (event) => {
+            const [start, end] = event.target.value.split('|');
+            fetchMatches(start, end);
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        let initialStart = urlParams.get('start');
+        let initialEnd = urlParams.get('end');
+
+        if (initialStart && initialEnd) {
+            selector.value = `${initialStart}|${initialEnd}`;
+        } else {
+            [initialStart, initialEnd] = selector.value.split('|');
+        }
+
+        fetchMatches(initialStart, initialEnd);
+
+    </script>
+</body>
+</html>
