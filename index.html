@@ -360,6 +360,14 @@
             },
         ];
 
+        const cabineCleaningConfig = [
+            { date: "05/09/2026", time: "09:00", cabine: "11+8+2+6", team: "U9 Porto" },
+            { date: "05/09/2026", time: "09:30", cabine: "10+5", team: "U15 Celta Paars" },
+            { date: "05/09/2026", time: "09:30", cabine: "7+4+9+1", team: "U11 Rangers" },
+            { date: "05/09/2026", time: "10:15", cabine: "11+6", team: "U7 PSV" },
+            { date: "05/09/2026", time: "12:30", cabine: "7+4+9+1", team: "U15 Getafe" },
+        ];
+
         // Fetches all team calendars directly from the RBFA API, filters them down to our
         // club's home games within the requested date range, removes duplicates, and only
         // then enriches the remaining (much smaller) list with their field name.
@@ -621,6 +629,43 @@
                             barContainerRow.appendChild(barContainerCell);
                             tbody.appendChild(barContainerRow);
                         }
+                    }
+
+                    // Add a "Cabines kuisen" row underneath the Toogdienst row, listing which team
+                    // cleans which cabine(s) at what time on this date.
+                    const cabineCleaningForDate = cabineCleaningConfig.filter(entry => entry.date === dateKeyFormatted);
+
+                    if (cabineCleaningForDate.length > 0) {
+                        const cleaningContainerRow = document.createElement('tr');
+                        cleaningContainerRow.className = 'bar-shift-container-row';
+
+                        const cleaningContainerCell = document.createElement('td');
+                        cleaningContainerCell.className = 'bar-shift-container-cell';
+                        cleaningContainerCell.colSpan = 6;
+
+                        const cleaningSplitDiv = document.createElement('div');
+                        cleaningSplitDiv.className = 'bar-shift-split';
+
+                        const cleaningColumn = document.createElement('div');
+                        cleaningColumn.className = 'bar-shift-column';
+
+                        const cleaningRows = cabineCleaningForDate.map(entry => `
+                            <tr>
+                                <td>${entry.time}</td>
+                                <td>${entry.cabine || '-'}</td>
+                                <td>${entry.team || '-'}</td>
+                            </tr>
+                        `).join('');
+
+                        cleaningColumn.innerHTML = `
+                            <div class="bar-shift-column-header">Cabines kuisen</div>
+                            <table class="bar-shift-inner-table"><tbody>${cleaningRows}</tbody></table>
+                        `;
+
+                        cleaningSplitDiv.appendChild(cleaningColumn);
+                        cleaningContainerCell.appendChild(cleaningSplitDiv);
+                        cleaningContainerRow.appendChild(cleaningContainerCell);
+                        tbody.appendChild(cleaningContainerRow);
                     }
 
                     listContainer.appendChild(table);
