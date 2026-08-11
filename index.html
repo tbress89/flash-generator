@@ -60,8 +60,8 @@
                             return data.data.teamCalendar.map(match => ({
                                 ...match,
                                 internalName: team.internalName,
-                                cabineHome: team.cabineHome,
-                                cabineAway: team.cabineAway
+                                cabinesBefore13h: team.cabinesBefore13h,
+                                cabinesAfter13h: team.cabinesAfter13h
                             }));
                         }
                     } catch (err) {
@@ -220,9 +220,15 @@
                                 minute: '2-digit' 
                             });
 
-                            // Locker rooms
-                            const cabineHome = match.cabineHome || '-';
-                            const cabineAway = match.cabineAway || '-';
+                            // Locker rooms: use the before/after 13h set depending on the match's start hour
+                            const matchHour = Number(matchTimeObj.toLocaleTimeString('nl-BE', {
+                                timeZone: 'Europe/Brussels',
+                                hour: '2-digit',
+                                hour12: false
+                            }));
+                            const cabines = matchHour < 13 ? match.cabinesBefore13h : match.cabinesAfter13h;
+                            const cabineHome = (cabines && cabines.cabineHome) || '-';
+                            const cabineAway = (cabines && cabines.cabineAway) || '-';
 
                             // Combine the internal name and series if needed, or just map them to the columns
                             tr.innerHTML = `
