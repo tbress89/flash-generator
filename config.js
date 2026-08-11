@@ -95,3 +95,10 @@ const cabineCleaningConfig = [
     { date: "05/09/2026", time: "10:15", cabine: "11+6", team: "U7 PSV" },
     { date: "05/09/2026", time: "12:30", cabine: "7+4+9+1", team: "U15 Getafe" },
 ];
+
+// Maps RBFA pitch codes to our internal field names
+const pitchCodeToFieldName = {
+    1: 'A-KGV',
+    2: 'B-KGV',
+    3: 'C',
+};

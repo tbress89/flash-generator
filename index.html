@@ -36,75 +36,8 @@
     </div>
 
     <script src="config.js"></script>
+    <script src="date-utils.js"></script>
     <script>
-        // Formats dates for the server request
-        function formatDateForServer(date) {
-            const yyyy = date.getFullYear();
-            const mm = String(date.getMonth() + 1).padStart(2, '0');
-            const dd = String(date.getDate()).padStart(2, '0');
-            return `${yyyy}-${mm}-${dd}`;
-        }
-
-        function getMostRecentMonday() {
-            const today = new Date();
-            const day = today.getDay();
-            // Calculate days to subtract to get to Monday (0 is Sunday, so if 0 subtract 6, else subtract day - 1)
-            const diff = today.getDate() - day + (day === 0 ? -6 : 1);
-            return new Date(today.setDate(diff));
-        }
-
-        // Fills the dropdown menu with weeks, each split into 4 entries:
-        // Midweek Flash (Mon-Thu), Vrijdag Flash, Zaterdag Flash, Zondag Flash
-        function generateWeeks() {
-            const selector = document.getElementById('week-selector');
-            let currentMonday = getMostRecentMonday();
-            const shortOptions = { month: 'short', day: 'numeric' };
-
-            for (let i = 0; i < 20; i++) {
-                const monday = new Date(currentMonday);
-
-                const thursday = new Date(monday);
-                thursday.setDate(monday.getDate() + 3);
-
-                const friday = new Date(monday);
-                friday.setDate(monday.getDate() + 4);
-
-                const saturday = new Date(monday);
-                saturday.setDate(monday.getDate() + 5);
-
-                const sunday = new Date(monday);
-                sunday.setDate(monday.getDate() + 6);
-
-                const optgroup = document.createElement('optgroup');
-                optgroup.label = `${monday.toLocaleDateString('nl-BE', shortOptions)} - ${sunday.toLocaleDateString('nl-BE', shortOptions)}`;
-
-                const entries = [
-                    { label: `Midweek Flash (${monday.toLocaleDateString('nl-BE', shortOptions)} - ${thursday.toLocaleDateString('nl-BE', shortOptions)})`, start: monday, end: thursday },
-                    { label: `Vrijdag Flash (${friday.toLocaleDateString('nl-BE', shortOptions)})`, start: friday, end: friday },
-                    { label: `Zaterdag Flash (${saturday.toLocaleDateString('nl-BE', shortOptions)})`, start: saturday, end: saturday },
-                    { label: `Zondag Flash (${sunday.toLocaleDateString('nl-BE', shortOptions)})`, start: sunday, end: sunday },
-                ];
-
-                entries.forEach(entry => {
-                    const optionElement = document.createElement('option');
-                    optionElement.value = `${formatDateForServer(entry.start)}|${formatDateForServer(entry.end)}`;
-                    optionElement.text = entry.label;
-                    optgroup.appendChild(optionElement);
-                });
-
-                selector.appendChild(optgroup);
-
-                currentMonday.setDate(currentMonday.getDate() + 7);
-            }
-        }
-
-        // Maps RBFA pitch codes to our internal field names
-        const pitchCodeToFieldName = {
-            1: 'A-KGV',
-            2: 'B-KGV',
-            3: 'C',
-        };
-        
         let cachedTeamCalendars = null;
         
         // Fetches all team calendars directly from the RBFA API, filters them down to our
@@ -116,7 +49,6 @@
 
             // 1. Fetch only if we haven't already cached the team calendars
             if (!cachedTeamCalendars) {
-                console.log("Fetching team calendars from RBFA API...");
                 const fetchPromises = teamConfig.map(async (team) => {
                     const getTeamCalendarUrl = `https://datalake-prod2018.rbfa.be/graphql?operationName=GetTeamCalendar&variables={"teamId":"${team.teamId}","language":"nl","sortByDate":"asc"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"3f0441e6723b9852b4f0cff2c872f4aa674c5de2d23589efc70c7a4ffb7f6383"}}`;
 
@@ -237,7 +169,7 @@
                     groupedMatches[dateKey].fields[fieldName].push(match);
                 });
 
-                // 2. Draw the layout perfectly matching the screenshot
+                // 2. Draw the layout
                 const sortedDateKeys = Object.keys(groupedMatches).sort();
 
                 sortedDateKeys.forEach(dateKey => {
@@ -282,9 +214,11 @@
                             
                             // Extract just the time (e.g., 9:00 instead of 09:00 to match screenshot exactly)
                             const matchTimeObj = new Date(match.startTime);
-                            const hours = matchTimeObj.getHours();
-                            const minutes = String(matchTimeObj.getMinutes()).padStart(2, '0');
-                            const timeText = `${hours}:${minutes}`;
+                            const timeText = matchTimeObj.toLocaleTimeString('nl-BE', { 
+                                timeZone: 'Europe/Brussels', 
+                                hour: '2-digit', 
+                                minute: '2-digit' 
+                            });
 
                             // Locker rooms
                             const cabineHome = match.cabineHome || '-';
