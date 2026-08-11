@@ -256,11 +256,19 @@
             return `${yyyy}-${mm}-${dd}`;
         }
 
+        function getMostRecentMonday() {
+            const today = new Date();
+            const day = today.getDay();
+            // Calculate days to subtract to get to Monday (0 is Sunday, so if 0 subtract 6, else subtract day - 1)
+            const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(today.setDate(diff));
+        }
+
         // Fills the dropdown menu with weeks, each split into 4 entries:
         // Midweek Flash (Mon-Thu), Vrijdag Flash, Zaterdag Flash, Zondag Flash
         function generateWeeks() {
             const selector = document.getElementById('week-selector');
-            let currentMonday = new Date(2026, 7, 10); // August 10, 2026
+            let currentMonday = getMostRecentMonday();
             const shortOptions = { month: 'short', day: 'numeric' };
 
             for (let i = 0; i < 20; i++) {
