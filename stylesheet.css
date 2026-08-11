@@ -1,0 +1,207 @@
+ :root {
+    --flash-purple: #5c4b82; /* The purple text color from the screenshot */
+    --flash-grey: #e6e6e6;   /* The light gray header background */
+    --text-dark: #000000;
+}
+
+body { 
+    font-family: Arial, sans-serif; 
+    background-color: #f4f6f8; 
+    margin: 0; 
+    padding: 20px; 
+    color: var(--text-dark);
+    font-size: 13px; /* Slightly smaller text for dense table layouts */
+}
+
+.no-print-area {
+    max-width: 950px;
+    margin: 0 auto 20px auto;
+    box-sizing: border-box;
+    text-align: center; 
+    background-color: #5c4b82; 
+    color: white;
+    padding: 20px; 
+    border-radius: 10px; 
+}
+
+select, button { 
+    padding: 8px 15px; 
+    font-size: 1em; 
+    border-radius: 5px; 
+    border: 1px solid #ccc; 
+    margin: 5px;
+    cursor: pointer;
+}
+
+button {
+    background-color: #ffffff;
+    color: #5c4b82;
+    font-weight: bold;
+}
+
+.header-banner {
+    max-width: 950px;
+    margin: 0 auto 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border: 1px solid black;
+    padding: 10px 15px;
+    background: white;
+    box-sizing: border-box;
+}
+
+.header-banner img {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.header-banner img[alt="Ik Dien - One Team"] {
+    height: auto;
+    width: 300px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.header-title {
+    flex: 1;
+    text-align: center;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: var(--flash-purple);
+    white-space: nowrap;
+}
+
+.match-list { max-width: 950px; margin: 0 auto; background: white; }
+
+.footer-banner {
+    max-width: 950px;
+    margin: 0 auto 20px auto;
+    text-align: center;
+    border: 1px solid black;
+    padding: 10px 15px;
+    background: white;
+    box-sizing: border-box;
+}
+
+.footer-banner img {
+    max-width: 100%;
+    height: auto;
+}
+
+.date-title-bar {
+    background-color: var(--flash-grey);
+    color: var(--flash-purple);
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid black;
+    border-bottom: none;
+    margin-top: 20px;
+}
+
+.flash-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid black;
+    margin-bottom: 30px;
+}
+
+.flash-table th, .flash-table td {
+    padding: 6px 10px;
+    text-align: left;
+    border-bottom: 1px solid #000; /* Dark lines between rows */
+}
+
+.field-header-row th {
+    background-color: var(--flash-grey);
+    color: var(--flash-purple);
+    font-weight: normal;
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+}
+
+/* Bar shift row styling */
+.flash-table td.bar-shift-container-cell {
+    padding: 0;
+}
+
+.bar-shift-split {
+    display: flex;
+}
+
+.bar-shift-column {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.bar-shift-column + .bar-shift-column {
+    border-left: 1px solid black;
+}
+
+.bar-shift-column-header {
+    background-color: var(--flash-grey);
+    color: var(--flash-purple);
+    font-style: italic;
+    padding: 6px 10px;
+    border-top: 1px solid black;
+    border-bottom: 2px solid black;
+}
+
+.bar-shift-inner-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.bar-shift-inner-table td {
+    padding: 6px 10px;
+    font-style: italic;
+    border-bottom: 1px solid #000;
+}
+
+.bar-shift-inner-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Center the time and locker room columns */
+.center-text { text-align: center !important; }
+
+/* Hide the header banner on small/mobile screens (still shown when printing) */
+@media screen and (max-width: 768px) {
+    .header-banner { display: none; }
+}
+
+/* --- PRINT STYLING (Optimizing for A4 Paper) --- */
+@media print {
+    @page { 
+        size: A4 portrait; 
+        margin: 1cm; /* Standard print margins */
+    }
+    body { 
+        background-color: white; 
+        margin: 0; 
+        padding: 0; 
+        -webkit-print-color-adjust: exact !important; 
+        print-color-adjust: exact !important; 
+    }
+    /* Hide the controls (dropdowns, buttons) when printing */
+    .no-print-area { display: none !important; }
+    
+    /* Prevent the table from breaking awkwardly across pages */
+    .flash-table { page-break-inside: auto; }
+    tr { page-break-inside: avoid; page-break-after: auto; }
+    .field-header-row { page-break-before: auto; }
+    
+    /* Ensure it spans the full width of the A4 sheet */
+    .match-list { max-width: 100%; }
+
+    /* Keep the header banner intact and full width when printing */
+    .header-banner { max-width: 100%; page-break-inside: avoid; page-break-after: avoid; }
+
+    /* Keep the footer banner intact and full width when printing */
+    .footer-banner { max-width: 100%; page-break-inside: avoid; page-break-before: avoid; }
+}
