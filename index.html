@@ -388,7 +388,7 @@
                 ],
                 teamShifts: []
             },
-                        {
+            {
                 date: "19/09/2026",
                 playerShifts: [],
                 teamShifts: [
@@ -407,6 +407,8 @@
             { date: "05/09/2026", time: "12:30", cabine: "7+4+9+1", team: "U15 Getafe" },
         ];
 
+        let cachedTeamCalendars = null;
+        
         // Fetches all team calendars directly from the RBFA API, filters them down to our
         // club's home games within the requested date range, removes duplicates, and only
         // then enriches the remaining (much smaller) list with their field name.
@@ -414,35 +416,36 @@
             const myStartDate = new Date(`${startDate}T00:00:00`);
             const myEndDate = new Date(`${endDate}T23:59:59`);
 
-            // 1. Fetch data for ALL teams at the same time using Promise.all
-            const fetchPromises = teamConfig.map(async (team) => {
-                const getTeamCalendarUrl = `https://datalake-prod2018.rbfa.be/graphql?operationName=GetTeamCalendar&variables={"teamId":"${team.teamId}","language":"nl","sortByDate":"asc"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"3f0441e6723b9852b4f0cff2c872f4aa674c5de2d23589efc70c7a4ffb7f6383"}}`;
+            // 1. Fetch only if we haven't already cached the team calendars
+            if (!cachedTeamCalendars) {
+                console.log("Fetching team calendars from RBFA API...");
+                const fetchPromises = teamConfig.map(async (team) => {
+                    const getTeamCalendarUrl = `https://datalake-prod2018.rbfa.be/graphql?operationName=GetTeamCalendar&variables={"teamId":"${team.teamId}","language":"nl","sortByDate":"asc"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"3f0441e6723b9852b4f0cff2c872f4aa674c5de2d23589efc70c7a4ffb7f6383"}}`;
 
-                try {
-                    const response = await fetch(getTeamCalendarUrl);
-                    const data = await response.json();
+                    try {
+                        const response = await fetch(getTeamCalendarUrl);
+                        const data = await response.json();
 
-                    if (data && data.data && data.data.teamCalendar) {
-                        return data.data.teamCalendar.map(match => ({
-                            ...match,
-                            internalName: team.internalName,
-                            cabineHome: team.cabineHome,
-                            cabineAway: team.cabineAway
-                        }));
+                        if (data && data.data && data.data.teamCalendar) {
+                            return data.data.teamCalendar.map(match => ({
+                                ...match,
+                                internalName: team.internalName,
+                                cabineHome: team.cabineHome,
+                                cabineAway: team.cabineAway
+                            }));
+                        }
+                    } catch (err) {
+                        console.error(`Failed to fetch team ${team.teamId}:`, err);
                     }
-                } catch (err) {
-                    console.error(`Failed to fetch team ${team.teamId}:`, err);
-                }
-                return [];
-            });
+                    return [];
+                });
 
-            const results = await Promise.all(fetchPromises);
+                const results = await Promise.all(fetchPromises);
+                cachedTeamCalendars = results.flat();
+            }
 
-            // 2. Combine all the separate lists into one massive list
-            const allMatches = results.flat();
-
-            // 3. Filter the massive list using the dynamic dates, BEFORE enriching with match details.
-            const filteredMatches = allMatches.filter(match => {
+            // 2. Filter from the cache instead of fetching again
+            const filteredMatches = cachedTeamCalendars.filter(match => {
                 if (!match.startTime) return false;
 
                 const matchDate = new Date(match.startTime);
@@ -452,7 +455,7 @@
                 return isWithinDates && isHomeGame;
             });
 
-            // 4. Remove duplicate matches (same id), keeping only the first occurrence
+            // 3. Remove duplicate matches (same id), keeping only the first occurrence
             const seenMatchIds = new Set();
             const uniqueMatches = filteredMatches.filter(match => {
                 if (seenMatchIds.has(match.id)) return false;
@@ -460,7 +463,7 @@
                 return true;
             });
 
-            // 5. Only NOW enrich the (already filtered) matches with their field name
+            // 4. Only NOW enrich the (already filtered) matches with their field name
             const enrichedMatches = await Promise.all(uniqueMatches.map(async match => {
                 const getMatchDetailUrl = `https://datalake-prod2018.rbfa.be/graphql?operationName=GetMatchDetail&variables={"matchId":"${match.id}","language":"nl"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"cd8867b845c206fe7aa75c1ebf7b53cbda0ff030253a45e2e2b4bcc13ee46c9a"}}`;
 
@@ -480,13 +483,13 @@
                 }
             }));
 
-            // 6. Sort the matches chronologically (earliest first)
+            // 5. Sort the matches chronologically (earliest first)
             enrichedMatches.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
 
             return enrichedMatches;
         }
 
-        // Fetches and formats the matches based on the screenshot layout
+        // 6. Fetches and formats the matches based on the screenshot layout
         async function fetchMatches(startDate, endDate) {
             const listContainer = document.getElementById('match-list');
             listContainer.innerHTML = '<p style="text-align: center;">Loading matches...</p>';
