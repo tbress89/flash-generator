@@ -78,7 +78,7 @@ const teamConfig = [
     { teamId: "367648", internalName: "Heren 10", cabinesBefore13h: { 
         cabineHome: "11", cabineAway: "8"
     }, cabinesAfter13h: { 
-        cabineHome: "-", cabineAway: "-"
+        cabineHome: "2", cabineAway: "6"
     }},
 
     // Vets
@@ -290,3 +290,8 @@ const pitchCodeToFieldName = {
     2: 'B-KGV',
     3: 'C',
 };
+
+// The RBFA calendar only gives us a match's start time, not its duration, so we assume
+// every match (and therefore its cabine usage) occupies this many minutes. Used to detect
+// cabine usage conflicts between teams whose matches overlap in time.
+const CABINE_USAGE_DURATION_MINUTES = 120;

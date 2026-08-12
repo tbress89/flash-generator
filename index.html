@@ -166,6 +166,32 @@
                         groupedMatches[dateKey].fields[fieldName] = [];
                     }
 
+                    // Pre-compute display/cabine info once per match so both the cabine
+                    // conflict check and the table rendering below can reuse it.
+                    match.internalName = match.internalName ? match.internalName : (match.homeTeam ? match.homeTeam.name : 'Unknown');
+                    match.awayTeamName = match.awayTeam ? match.awayTeam.name : 'Unknown';
+
+                    match.timeText = matchDateObj.toLocaleTimeString('nl-BE', {
+                        timeZone: 'Europe/Brussels',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    // Locker rooms: use the before/after 13h set depending on the match's start hour
+                    const matchHour = Number(matchDateObj.toLocaleTimeString('nl-BE', {
+                        timeZone: 'Europe/Brussels',
+                        hour: '2-digit',
+                        hour12: false
+                    }));
+                    const cabines = matchHour < 13 ? match.cabinesBefore13h : match.cabinesAfter13h;
+                    match.cabineHome = (cabines && cabines.cabineHome) || '-';
+                    match.cabineAway = (cabines && cabines.cabineAway) || '-';
+
+                    // Minutes-from-midnight time block used to detect cabine usage conflicts
+                    // (e.g. 10:00 AM -> 600). This sidesteps Date-object arithmetic entirely.
+                    match.startMinutes = getMinutesFromMidnight(matchDateObj);
+                    match.endMinutes = match.startMinutes + CABINE_USAGE_DURATION_MINUTES;
+
                     groupedMatches[dateKey].fields[fieldName].push(match);
                 });
 
@@ -180,6 +206,38 @@
                     dateTitle.className = 'date-title-bar';
                     dateTitle.textContent = dateGroup.displayDate;
                     listContainer.appendChild(dateTitle);
+
+                    // Check for cabine usage conflicts between ALL matches on this date (cabines
+                    // are a shared resource across fields, not just within one field), then show
+                    // a warning banner listing every conflicting pair.
+                    const matchesForDate = Object.values(dateGroup.fields).flat();
+                    const cabineUsages = matchesForDate.flatMap(match => {
+                        const homeUsages = parseCabineTokens(match.cabineHome).map(cabine => ({
+                            cabine,
+                            startMinutes: match.startMinutes,
+                            endMinutes: match.endMinutes,
+                            teamLabel: `${match.internalName} (thuis)`,
+                            timeLabel: match.timeText
+                        }));
+                        const awayUsages = parseCabineTokens(match.cabineAway).map(cabine => ({
+                            cabine,
+                            startMinutes: match.startMinutes,
+                            endMinutes: match.endMinutes,
+                            teamLabel: `${match.awayTeamName} (bezoekers)`,
+                            timeLabel: match.timeText
+                        }));
+                        return [...homeUsages, ...awayUsages];
+                    });
+                    const cabineConflicts = findCabineConflicts(cabineUsages);
+
+                    if (cabineConflicts.length > 0) {
+                        const warningDiv = document.createElement('div');
+                        warningDiv.className = 'cabine-conflict-warning';
+                        warningDiv.innerHTML = cabineConflicts.map(conflict => `
+                            ⚠️ Cabine ${conflict.cabine} conflict: ${conflict.first.teamLabel} (${conflict.first.timeLabel}) overlapt met ${conflict.second.teamLabel} (${conflict.second.timeLabel})
+                        `).join('<br>');
+                        listContainer.appendChild(warningDiv);
+                    }
 
                     // Create one big table for the whole day
                     const table = document.createElement('table');
@@ -206,38 +264,17 @@
                         // Loop through matches for this field
                         dateGroup.fields[fieldName].forEach(match => {
                             const tr = document.createElement('tr');
-                            
-                            // Determine names
-                            const seriesName = match.series ? match.series.name : '';
-                            const internalName = match.internalName ? match.internalName : (match.homeTeam ? match.homeTeam.name : 'Unknown');
-                            const awayTeamName = match.awayTeam ? match.awayTeam.name : 'Unknown';
-                            
-                            // Extract just the time (e.g., 9:00 instead of 09:00 to match screenshot exactly)
-                            const matchTimeObj = new Date(match.startTime);
-                            const timeText = matchTimeObj.toLocaleTimeString('nl-BE', { 
-                                timeZone: 'Europe/Brussels', 
-                                hour: '2-digit', 
-                                minute: '2-digit' 
-                            });
 
-                            // Locker rooms: use the before/after 13h set depending on the match's start hour
-                            const matchHour = Number(matchTimeObj.toLocaleTimeString('nl-BE', {
-                                timeZone: 'Europe/Brussels',
-                                hour: '2-digit',
-                                hour12: false
-                            }));
-                            const cabines = matchHour < 13 ? match.cabinesBefore13h : match.cabinesAfter13h;
-                            const cabineHome = (cabines && cabines.cabineHome) || '-';
-                            const cabineAway = (cabines && cabines.cabineAway) || '-';
+                            const seriesName = match.series ? match.series.name : '';
 
                             // Combine the internal name and series if needed, or just map them to the columns
                             tr.innerHTML = `
                                 <td>${seriesName}</td>
-                                <td>${internalName}</td>
-                                <td>${awayTeamName}</td>
-                                <td class="center-text">${timeText}</td>
-                                <td class="center-text">${cabineHome}</td>
-                                <td class="center-text">${cabineAway}</td>
+                                <td>${match.internalName}</td>
+                                <td>${match.awayTeamName}</td>
+                                <td class="center-text">${match.timeText}</td>
+                                <td class="center-text">${match.cabineHome}</td>
+                                <td class="center-text">${match.cabineAway}</td>
                             `;
                             
                             tbody.appendChild(tr);

@@ -104,6 +104,16 @@ button {
     margin-top: 20px;
 }
 
+.cabine-conflict-warning {
+    background-color: #fdecea;
+    color: #8a1f11;
+    font-weight: bold;
+    padding: 10px;
+    border: 1px solid black;
+    border-top: none;
+    border-bottom: none;
+}
+
 .flash-table {
     width: 100%;
     border-collapse: collapse;
@@ -204,4 +214,7 @@ button {
 
     /* Keep the footer banner intact and full width when printing */
     .footer-banner { max-width: 100%; page-break-inside: avoid; page-break-before: avoid; }
+
+    /* Keep the cabine conflict warning intact and attached to its date header when printing */
+    .cabine-conflict-warning { page-break-inside: avoid; page-break-after: avoid; }
 }

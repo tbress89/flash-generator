@@ -1,3 +1,66 @@
+// Converts a Date into "minutes from midnight" (e.g. 10:00 AM -> 600) for the given IANA
+// timezone. Working in minutes-from-midnight makes it trivial to check whether two time
+// blocks overlap (simple integer comparisons) without fighting Date objects, DST, etc.
+function getMinutesFromMidnight(date, timeZone = 'Europe/Brussels') {
+    const parts = new Intl.DateTimeFormat('en-GB', {
+        timeZone,
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    }).formatToParts(date);
+
+    const hour = Number(parts.find(part => part.type === 'hour').value);
+    const minute = Number(parts.find(part => part.type === 'minute').value);
+    return hour * 60 + minute;
+}
+
+// Splits a cabine string like "1 + 2" into individual cabine tokens (e.g. ["1", "2"]).
+// Unassigned cabines ("-", empty, etc.) resolve to an empty array.
+function parseCabineTokens(cabineStr) {
+    if (!cabineStr || cabineStr.trim() === '-') return [];
+    return cabineStr.split('+')
+        .map(token => token.trim())
+        .filter(token => token && token !== '-');
+}
+
+// Given a flat list of cabine usage entries (each with at least a `cabine`, `startMinutes`
+// and `endMinutes`), finds every pair of entries that use the same cabine at overlapping
+// times.
+//
+// Greedy algorithm: group usages by cabine, sort each group by start time, then sweep
+// through once while tracking the "current" (still-open) interval. If the next usage starts
+// before the current interval ends, it's a conflict; we then keep whichever of the two ends
+// later, since that's the interval that could still overlap with what comes after it. This
+// is the same greedy strategy behind classic interval-scheduling problems, applied here to
+// detect overlaps in a single O(n log n) pass per cabine instead of comparing every pair.
+function findCabineConflicts(usages) {
+    const conflicts = [];
+    const usagesByCabine = {};
+
+    usages.forEach(usage => {
+        if (!usagesByCabine[usage.cabine]) usagesByCabine[usage.cabine] = [];
+        usagesByCabine[usage.cabine].push(usage);
+    });
+
+    Object.values(usagesByCabine).forEach(cabineUsages => {
+        const sorted = cabineUsages.slice().sort((a, b) => a.startMinutes - b.startMinutes);
+
+        let current = sorted[0];
+        for (let i = 1; i < sorted.length; i++) {
+            const next = sorted[i];
+
+            if (next.startMinutes < current.endMinutes) {
+                conflicts.push({ cabine: next.cabine, first: current, second: next });
+                current = next.endMinutes > current.endMinutes ? next : current;
+            } else {
+                current = next;
+            }
+        }
+    });
+
+    return conflicts;
+}
+
 // Formats dates for the server request
 function formatDateForServer(date) {
     const yyyy = date.getFullYear();
