@@ -48,7 +48,7 @@ const teamConfig = [
     { teamId: "367646", internalName: "Heren 4", cabinesBefore13h: { 
         cabineHome: "11", cabineAway: "8"
     }, cabinesAfter13h: { 
-        cabineHome: "9", cabineAway: "4"
+        cabineHome: "10", cabineAway: "7"
     }},
     { teamId: "367645", internalName: "Heren 5", cabinesBefore13h: { 
         cabineHome: "10", cabineAway: "7"
