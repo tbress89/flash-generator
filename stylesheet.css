@@ -180,6 +180,16 @@ button {
 /* Center the time and locker room columns */
 .center-text { text-align: center !important; }
 
+/* Editable cabine dropdown shown on screen; its plain-text twin is only used when printing */
+.cabine-select {
+    font-size: 1em;
+    padding: 2px 4px;
+}
+
+.cabine-print-text {
+    display: none;
+}
+
 /* Hide the header banner on small/mobile screens (still shown when printing) */
 @media screen and (max-width: 768px) {
     .header-banner { display: none; }
@@ -217,4 +227,8 @@ button {
 
     /* Keep the cabine conflict warning intact and attached to its date header when printing */
     .cabine-conflict-warning { page-break-inside: avoid; page-break-after: avoid; }
+
+    /* Render cabine dropdowns as plain text when printing */
+    .cabine-select { display: none; }
+    .cabine-print-text { display: inline; }
 }

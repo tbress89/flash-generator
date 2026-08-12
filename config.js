@@ -30,7 +30,8 @@ const teamConfig = [
     }},
 
     // Senioren Heren
-    { teamId: "364477", internalName: "Heren 1", cabinesBefore13h: { 
+    // Heren 1 always uses cabines 1+2 (home) and 5+6 (away), so these are not editable in the UI.
+    { teamId: "364477", internalName: "Heren 1", cabinesEditable: false, cabinesBefore13h: { 
         cabineHome: "1 + 2", cabineAway: "5 + 6"
     }, cabinesAfter13h: { 
         cabineHome: "1 + 2", cabineAway: "5 + 6"
@@ -295,3 +296,6 @@ const pitchCodeToFieldName = {
 // every match (and therefore its cabine usage) occupies this many minutes. Used to detect
 // cabine usage conflicts between teams whose matches overlap in time.
 const CABINE_USAGE_DURATION_MINUTES = 120;
+
+// The valid cabine numbers that can be picked from the editable cabine dropdowns (there is no cabine 3).
+const CABINE_DROPDOWN_OPTIONS = ["1", "2", "4", "5", "6", "7", "8", "9", "10", "11"];

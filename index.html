@@ -39,7 +39,84 @@
     <script src="date-utils.js"></script>
     <script>
         let cachedTeamCalendars = null;
-        
+
+        // Builds an editable cabine dropdown (plus a hidden plain-text twin used only when
+        // printing) for a single cabine slot (cabineHome or cabineAway) of a match. Editing
+        // the dropdown updates the match's cabine value, keeps the print text in sync, and
+        // retriggers the conflict check for that date.
+        function buildCabineCell(match, cabineField, dateGroup, warningDiv) {
+            const td = document.createElement('td');
+            td.className = 'center-text';
+
+            // Some teams (e.g. Heren 1) always use the same fixed cabine(s) and can't be edited.
+            if (match.cabinesEditable === false) {
+                td.textContent = match[cabineField];
+                return td;
+            }
+
+            const select = document.createElement('select');
+            select.className = 'cabine-select';
+
+            const printText = document.createElement('span');
+            printText.className = 'cabine-print-text';
+            printText.textContent = match[cabineField];
+
+            ['-', ...CABINE_DROPDOWN_OPTIONS].forEach(optionValue => {
+                const option = document.createElement('option');
+                option.value = optionValue;
+                option.textContent = optionValue;
+                if (optionValue === match[cabineField]) option.selected = true;
+                select.appendChild(option);
+            });
+
+            select.addEventListener('change', () => {
+                match[cabineField] = select.value;
+                printText.textContent = select.value;
+                renderCabineConflictWarning(dateGroup, warningDiv);
+            });
+
+            td.appendChild(select);
+            td.appendChild(printText);
+            return td;
+        }
+
+        // Builds the flat list of cabine usage entries (one per assigned cabine token, for both
+        // the home and away team of every match on this date) and runs the conflict detection
+        // over them, then (re)renders the warning banner for that date - showing it when there
+        // are conflicts, hiding it otherwise. Cabines are a shared resource across fields, so all
+        // matches for the date are checked together, not just those on the same field.
+        function renderCabineConflictWarning(dateGroup, warningDiv) {
+            const matchesForDate = Object.values(dateGroup.fields).flat();
+            const cabineUsages = matchesForDate.flatMap(match => {
+                const homeUsages = parseCabineTokens(match.cabineHome).map(cabine => ({
+                    cabine,
+                    startMinutes: match.startMinutes,
+                    endMinutes: match.endMinutes,
+                    teamLabel: `${match.internalName} (thuis)`,
+                    timeLabel: match.timeText
+                }));
+                const awayUsages = parseCabineTokens(match.cabineAway).map(cabine => ({
+                    cabine,
+                    startMinutes: match.startMinutes,
+                    endMinutes: match.endMinutes,
+                    teamLabel: `${match.awayTeamName} (bezoekers)`,
+                    timeLabel: match.timeText
+                }));
+                return [...homeUsages, ...awayUsages];
+            });
+            const cabineConflicts = findCabineConflicts(cabineUsages);
+
+            if (cabineConflicts.length > 0) {
+                warningDiv.innerHTML = cabineConflicts.map(conflict => `
+                    ⚠️ Cabine ${conflict.cabine} conflict: ${conflict.first.teamLabel} (${conflict.first.timeLabel}) overlapt met ${conflict.second.teamLabel} (${conflict.second.timeLabel})
+                `).join('<br>');
+                warningDiv.style.display = '';
+            } else {
+                warningDiv.innerHTML = '';
+                warningDiv.style.display = 'none';
+            }
+        }
+
         // Fetches all team calendars directly from the RBFA API, filters them down to our
         // club's home games within the requested date range, removes duplicates, and only
         // then enriches the remaining (much smaller) list with their field name.
@@ -61,7 +138,8 @@
                                 ...match,
                                 internalName: team.internalName,
                                 cabinesBefore13h: team.cabinesBefore13h,
-                                cabinesAfter13h: team.cabinesAfter13h
+                                cabinesAfter13h: team.cabinesAfter13h,
+                                cabinesEditable: team.cabinesEditable !== false
                             }));
                         }
                     } catch (err) {
@@ -209,35 +287,12 @@
 
                     // Check for cabine usage conflicts between ALL matches on this date (cabines
                     // are a shared resource across fields, not just within one field), then show
-                    // a warning banner listing every conflicting pair.
-                    const matchesForDate = Object.values(dateGroup.fields).flat();
-                    const cabineUsages = matchesForDate.flatMap(match => {
-                        const homeUsages = parseCabineTokens(match.cabineHome).map(cabine => ({
-                            cabine,
-                            startMinutes: match.startMinutes,
-                            endMinutes: match.endMinutes,
-                            teamLabel: `${match.internalName} (thuis)`,
-                            timeLabel: match.timeText
-                        }));
-                        const awayUsages = parseCabineTokens(match.cabineAway).map(cabine => ({
-                            cabine,
-                            startMinutes: match.startMinutes,
-                            endMinutes: match.endMinutes,
-                            teamLabel: `${match.awayTeamName} (bezoekers)`,
-                            timeLabel: match.timeText
-                        }));
-                        return [...homeUsages, ...awayUsages];
-                    });
-                    const cabineConflicts = findCabineConflicts(cabineUsages);
-
-                    if (cabineConflicts.length > 0) {
-                        const warningDiv = document.createElement('div');
-                        warningDiv.className = 'cabine-conflict-warning';
-                        warningDiv.innerHTML = cabineConflicts.map(conflict => `
-                            ⚠️ Cabine ${conflict.cabine} conflict: ${conflict.first.teamLabel} (${conflict.first.timeLabel}) overlapt met ${conflict.second.teamLabel} (${conflict.second.timeLabel})
-                        `).join('<br>');
-                        listContainer.appendChild(warningDiv);
-                    }
+                    // a warning banner listing every conflicting pair. The banner is kept around
+                    // (hidden when empty) so it can be updated live when a cabine dropdown changes.
+                    const warningDiv = document.createElement('div');
+                    warningDiv.className = 'cabine-conflict-warning';
+                    listContainer.appendChild(warningDiv);
+                    renderCabineConflictWarning(dateGroup, warningDiv);
 
                     // Create one big table for the whole day
                     const table = document.createElement('table');
@@ -273,10 +328,11 @@
                                 <td>${match.internalName}</td>
                                 <td>${match.awayTeamName}</td>
                                 <td class="center-text">${match.timeText}</td>
-                                <td class="center-text">${match.cabineHome}</td>
-                                <td class="center-text">${match.cabineAway}</td>
                             `;
-                            
+
+                            tr.appendChild(buildCabineCell(match, 'cabineHome', dateGroup, warningDiv));
+                            tr.appendChild(buildCabineCell(match, 'cabineAway', dateGroup, warningDiv));
+
                             tbody.appendChild(tr);
                         });
                     });
