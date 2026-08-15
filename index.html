@@ -88,16 +88,20 @@
         function renderCabineConflictWarning(dateGroup, warningDiv) {
             const matchesForDate = Object.values(dateGroup.fields).flat();
             const cabineUsages = matchesForDate.flatMap(match => {
+                // The cabine must already be free some minutes before the match starts, so we
+                // shift the usage window's start back by that buffer for conflict purposes only
+                // (match.startMinutes itself is left untouched for display elsewhere).
+                const conflictStartMinutes = match.startMinutes - CABINE_FREE_BEFORE_MATCH_MINUTES;
                 const homeUsages = parseCabineTokens(match.cabineHome).map(cabine => ({
                     cabine,
-                    startMinutes: match.startMinutes,
+                    startMinutes: conflictStartMinutes,
                     endMinutes: match.endMinutes,
                     teamLabel: `${match.internalName} (thuis)`,
                     timeLabel: match.timeText
                 }));
                 const awayUsages = parseCabineTokens(match.cabineAway).map(cabine => ({
                     cabine,
-                    startMinutes: match.startMinutes,
+                    startMinutes: conflictStartMinutes,
                     endMinutes: match.endMinutes,
                     teamLabel: `${match.awayTeamName} (bezoekers)`,
                     timeLabel: match.timeText
@@ -268,7 +272,7 @@
                     // Minutes-from-midnight time block used to detect cabine usage conflicts
                     // (e.g. 10:00 AM -> 600). This sidesteps Date-object arithmetic entirely.
                     match.startMinutes = getMinutesFromMidnight(matchDateObj);
-                    match.endMinutes = match.startMinutes + CABINE_USAGE_DURATION_MINUTES;
+                    match.endMinutes = match.startMinutes + getCabineUsageDurationMinutes(match.internalName);
 
                     groupedMatches[dateKey].fields[fieldName].push(match);
                 });
