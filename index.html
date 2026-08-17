@@ -9,30 +9,32 @@
 </head>
 <body>
 
-    <!-- This section will be completely hidden when you print -->
-    <div class="no-print-area">
-        <div>
-            <label for="week-selector"><strong>Selecteer Flash: </strong></label>
-            <select id="week-selector"></select>
-            <button onclick="window.print()">🖨️ Afdrukken</button>
+    <div class="a4-print-container">
+        <!-- This section will be completely hidden when you print -->
+        <div class="no-print-area">
+            <div>
+                <label for="week-selector"><strong>Selecteer Flash: </strong></label>
+                <select id="week-selector"></select>
+                <button onclick="window.print()">🖨️ Afdrukken</button>
+            </div>
         </div>
-    </div>
-    
-    <!-- This is the area that will be printed -->
-    <div class="header-banner">
-        <img src="images/grassroots.jpeg" alt="Grassroots">
-        <img src="images/ikdien.jpeg" alt="Ik Dien">
-        <img src="images/ikdien-oneteam.png" alt="Ik Dien - One Team">
-        <img src="images/ikdien.jpeg" alt="Ik Dien">
-        <img src="images/grassroots.jpeg" alt="Grassroots">
-    </div>
+        
+        <!-- This is the area that will be printed -->
+        <div class="header-banner">
+            <img src="images/grassroots.jpeg" alt="Grassroots">
+            <img src="images/ikdien.jpeg" alt="Ik Dien">
+            <img src="images/ikdien-oneteam.png" alt="Ik Dien - One Team">
+            <img src="images/ikdien.jpeg" alt="Ik Dien">
+            <img src="images/grassroots.jpeg" alt="Grassroots">
+        </div>
 
-    <div id="match-list" class="match-list">
-        <p style="text-align: center;">Loading matches...</p>
-    </div>
+        <div id="match-list" class="match-list">
+            <p style="text-align: center;">Loading matches...</p>
+        </div>
 
-    <div class="footer-banner">
-        <img src="images/sponsors.png" alt="Sponsors">
+        <div class="footer-banner">
+            <img id="footer-sponsor-img" src="images/sponsors.png" alt="Sponsors">
+        </div>
     </div>
 
     <script src="config.js"></script>
@@ -201,10 +203,29 @@
             return enrichedMatches;
         }
 
+        // Picks the footer sponsor image: on a Zaterdag Flash (a single-day selection that
+        // falls on a Saturday) the regular sponsors banner is swapped for one of two smaller
+        // variants, alternating by the day-of-month being even or odd. Any other selection
+        // (midweek, Friday, Sunday, ...) keeps using the full sponsors banner.
+        function updateSponsorBanner(startDate, endDate) {
+            const sponsorImg = document.getElementById('footer-sponsor-img');
+            const startDateObj = new Date(`${startDate}T00:00:00`);
+            const isSingleSaturday = startDate === endDate && startDateObj.getDay() === 6;
+
+            if (isSingleSaturday) {
+                const isEvenDate = startDateObj.getDate() % 2 === 0;
+                sponsorImg.src = isEvenDate ? 'images/sponsors_small_2.png' : 'images/sponsors_small_1.png';
+            } else {
+                sponsorImg.src = 'images/sponsors.png';
+            }
+        }
+
         // 6. Fetches and formats the matches based on the screenshot layout
         async function fetchMatches(startDate, endDate) {
             const listContainer = document.getElementById('match-list');
             listContainer.innerHTML = '<p style="text-align: center;">Loading matches...</p>';
+
+            updateSponsorBanner(startDate, endDate);
 
             try {
                 const newUrl = `?start=${startDate}&end=${endDate}`;
@@ -294,7 +315,7 @@
                     // a warning banner listing every conflicting pair. The banner is kept around
                     // (hidden when empty) so it can be updated live when a cabine dropdown changes.
                     const warningDiv = document.createElement('div');
-                    warningDiv.className = 'cabine-conflict-warning';
+                    warningDiv.className = 'cabine-conflict-warning no-print';
                     listContainer.appendChild(warningDiv);
                     renderCabineConflictWarning(dateGroup, warningDiv);
 

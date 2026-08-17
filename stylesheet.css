@@ -195,6 +195,11 @@ button {
     .header-banner { display: none; }
 }
 
+/* @page {
+  size: A4 portrait;
+  margin: 1cm;
+} */
+
 /* --- PRINT STYLING (Optimizing for A4 Paper) --- */
 @media print {
     @page { 
@@ -210,6 +215,14 @@ button {
     }
     /* Hide the controls (dropdowns, buttons) when printing */
     .no-print-area { display: none !important; }
+
+    .no-print { display: none !important; }
+
+    .a4-print-container {
+        /* A4 is 297mm tall. Subtract the 2cm (20mm) top/bottom margins = 277mm */
+        max-height: 277mm; 
+        overflow: hidden; /* This hides everything that falls outside the first page */
+    }
     
     /* Prevent the table from breaking awkwardly across pages */
     .flash-table { page-break-inside: auto; }
