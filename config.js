@@ -19,14 +19,14 @@ const teamConfig = [
 
     // Meisjes
     { teamId: "380702", internalName: "MU20 Barcelona Girls", cabinesBefore13h: { 
-        cabineHome: "-", cabineAway: "-"
+        cabineHome: "11", cabineAway: "6"
     }, cabinesAfter13h: { 
-        cabineHome: "-", cabineAway: "-"
+        cabineHome: "11", cabineAway: "6"
     }},
     { teamId: "380706", internalName: "MU13 Ajax Girls", cabinesBefore13h: { 
-        cabineHome: "10", cabineAway: "5"
+        cabineHome: "-", cabineAway: "-"
     }, cabinesAfter13h: { 
-        cabineHome: "10", cabineAway: "5"
+        cabineHome: "-", cabineAway: "-"
     }},
 
     // Senioren Heren
@@ -116,9 +116,9 @@ const teamConfig = [
         cabineHome: "7", cabineAway: "4"
     }},
     { teamId: "378981", internalName: "U16 Benfica", cabinesBefore13h: { 
-        cabineHome: "-", cabineAway: "-"
+        cabineHome: "9", cabineAway: "1"
     }, cabinesAfter13h: { 
-        cabineHome: "-", cabineAway: "-"
+        cabineHome: "9", cabineAway: "1"
     }},
     { teamId: "378980", internalName: "U15 Celta Paars", cabinesBefore13h: { 
         cabineHome: "10", cabineAway: "5"
@@ -131,9 +131,9 @@ const teamConfig = [
         cabineHome: "8", cabineAway: "2"
     }},
     { teamId: "379377", internalName: "U15 Getafe", cabinesBefore13h: { 
-        cabineHome: "-", cabineAway: "-"
+        cabineHome: "8", cabineAway: "2"
     }, cabinesAfter13h: { 
-        cabineHome: "-", cabineAway: "-"
+        cabineHome: "8", cabineAway: "2"
     }},
     { teamId: "378979", internalName: "U14 Madrid", cabinesBefore13h: { 
         cabineHome: "11", cabineAway: "6"

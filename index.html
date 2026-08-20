@@ -9,32 +9,30 @@
 </head>
 <body>
 
-    <div class="a4-print-container">
-        <!-- This section will be completely hidden when you print -->
-        <div class="no-print-area">
-            <div>
-                <label for="week-selector"><strong>Selecteer Flash: </strong></label>
-                <select id="week-selector"></select>
-                <button onclick="window.print()">🖨️ Afdrukken</button>
-            </div>
+    <!-- This section will be completely hidden when you print -->
+    <div class="no-print-area">
+        <div>
+            <label for="week-selector"><strong>Selecteer Flash: </strong></label>
+            <select id="week-selector"></select>
+            <button onclick="window.print()">🖨️ Afdrukken</button>
         </div>
-        
-        <!-- This is the area that will be printed -->
-        <div class="header-banner">
-            <img src="images/grassroots.jpeg" alt="Grassroots">
-            <img src="images/ikdien.jpeg" alt="Ik Dien">
-            <img src="images/ikdien-oneteam.png" alt="Ik Dien - One Team">
-            <img src="images/ikdien.jpeg" alt="Ik Dien">
-            <img src="images/grassroots.jpeg" alt="Grassroots">
-        </div>
+    </div>
+    
+    <!-- This is the area that will be printed -->
+    <div class="header-banner">
+        <img src="images/grassroots.jpeg" alt="Grassroots">
+        <img src="images/ikdien.jpeg" alt="Ik Dien">
+        <img src="images/ikdien-oneteam.png" alt="Ik Dien - One Team">
+        <img src="images/ikdien.jpeg" alt="Ik Dien">
+        <img src="images/grassroots.jpeg" alt="Grassroots">
+    </div>
 
-        <div id="match-list" class="match-list">
-            <p style="text-align: center;">Loading matches...</p>
-        </div>
+    <div id="match-list" class="match-list">
+        <p style="text-align: center;">Loading matches...</p>
+    </div>
 
-        <div class="footer-banner">
-            <img id="footer-sponsor-img" src="images/sponsors.png" alt="Sponsors">
-        </div>
+    <div class="footer-banner">
+        <img id="footer-sponsor-img" src="images/sponsors.png" alt="Sponsors">
     </div>
 
     <script src="config.js"></script>
