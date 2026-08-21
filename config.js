@@ -368,7 +368,7 @@ const SATURDAY_CABINE_OVERRIDES = [
         { cabineHome: "7", cabineAway: "4" }
     ]},
     { fieldName: 'B-KGV', startMinutes: 17 * 60, cabinePairs: [
-        { cabineHome: "7", cabineAway: "4" },
+        { cabineHome: "9", cabineAway: "1" },
     ]},
 
     { fieldName: 'C', startMinutes: 10 * 60, cabinePairs: [
