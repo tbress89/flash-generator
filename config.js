@@ -316,7 +316,7 @@ function getCabineUsageDurationMinutes(internalName) {
 const CABINE_FREE_BEFORE_MATCH_MINUTES = 15;
 
 // The valid cabine numbers that can be picked from the editable cabine dropdowns (there is no cabine 3).
-const CABINE_DROPDOWN_OPTIONS = ["1", "2", "4", "5", "6", "7", "7L", "7R", "8", "8L", "8R", "9", "9L", "9R", "10", "10L", "10R", "11", "11L", "11R", "tennis"];
+const CABINE_DROPDOWN_OPTIONS = ["1", "2", "2L", "2R", "4", "5", "5L", "5R", "6", "6L", "6R", "7", "7L", "7R", "8", "8L", "8R", "9", "9L", "9R", "10", "10L", "10R", "11", "11L", "11R", "tennis"];
 
 // On Saturdays, some field + kickoff-time combinations use a completely fixed cabine plan
 // instead of each team's own configured cabine preference (which is why several youth teams
@@ -326,12 +326,27 @@ const CABINE_DROPDOWN_OPTIONS = ["1", "2", "4", "5", "6", "7", "7L", "7R", "8", 
 // that field.
 const SATURDAY_CABINE_OVERRIDES = [
     { fieldName: 'A-KGV', startMinutes: 9 * 60, cabinePairs: [
-        { cabineHome: "8L", cabineAway: "2" },
-        { cabineHome: "8R", cabineAway: "5" }
+        { cabineHome: "11L", cabineAway: "6L" },
+        { cabineHome: "11R", cabineAway: "6R" },
+        { cabineHome: "8R", cabineAway: "2R" },
+    ]},
+    { fieldName: 'A-KGV', startMinutes: 9 * 60 + 30, cabinePairs: [
+        { cabineHome: "8L", cabineAway: "2L" },
+        { cabineHome: "8R", cabineAway: "2R" }
     ]},
     { fieldName: 'A-KGV', startMinutes: 10 * 60 + 30, cabinePairs: [
-        { cabineHome: "8L", cabineAway: "2" },
-        { cabineHome: "8R", cabineAway: "5" }
+        { cabineHome: "11L", cabineAway: "6L" },
+        { cabineHome: "11R", cabineAway: "6R" },
+        { cabineHome: "8", cabineAway: "tennis" }
+    ]},
+    { fieldName: 'A-KGV', startMinutes: 12 * 60, cabinePairs: [
+        { cabineHome: "8", cabineAway: "2" },
+    ]},
+    { fieldName: 'A-KGV', startMinutes: 12 * 60 + 15, cabinePairs: [
+        { cabineHome: "8", cabineAway: "2" },
+    ]},
+    { fieldName: 'A-KGV', startMinutes: 14 * 60 + 30, cabinePairs: [
+        { cabineHome: "11", cabineAway: "6" },
     ]},
     { fieldName: 'A-KGV', startMinutes: 17 * 60, cabinePairs: [
         { cabineHome: "10", cabineAway: "5" },
@@ -343,6 +358,9 @@ const SATURDAY_CABINE_OVERRIDES = [
     { fieldName: 'B-KGV', startMinutes: 11 * 60 + 30, cabinePairs: [
         { cabineHome: "9", cabineAway: "1" },
         { cabineHome: "7", cabineAway: "4" }
+    ]},
+    { fieldName: 'B-KGV', startMinutes: 14 * 60, cabinePairs: [
+        { cabineHome: "9", cabineAway: "1" },
     ]},
     { fieldName: 'B-KGV', startMinutes: 14 * 60 + 30, cabinePairs: [
         { cabineHome: "9", cabineAway: "1" },
