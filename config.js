@@ -349,8 +349,9 @@ const SATURDAY_CABINE_OVERRIDES = [
         { cabineHome: "11", cabineAway: "6" },
     ]},
     { fieldName: 'A-KGV', startMinutes: 17 * 60, cabinePairs: [
-        { cabineHome: "10", cabineAway: "5" },
+        { cabineHome: "7", cabineAway: "4" },
     ]},
+
     { fieldName: 'B-KGV', startMinutes: 9 * 60 + 30, cabinePairs: [
         { cabineHome: "9", cabineAway: "1" },
         { cabineHome: "7", cabineAway: "4" }
@@ -366,13 +367,23 @@ const SATURDAY_CABINE_OVERRIDES = [
         { cabineHome: "9", cabineAway: "1" },
         { cabineHome: "7", cabineAway: "4" }
     ]},
+    { fieldName: 'B-KGV', startMinutes: 17 * 60, cabinePairs: [
+        { cabineHome: "9", cabineAway: "1" },
+    ]},
+
+    { fieldName: 'C', startMinutes: 10 * 60, cabinePairs: [
+        { cabineHome: "10", cabineAway: "5" }
+    ]},
     { fieldName: 'C', startMinutes: 11 * 60, cabinePairs: [
         { cabineHome: "10", cabineAway: "5" }
     ]},
-        { fieldName: 'C', startMinutes: 14 * 60, cabinePairs: [
+    { fieldName: 'C', startMinutes: 14 * 60, cabinePairs: [
         { cabineHome: "10", cabineAway: "5" }
     ]},
     { fieldName: 'C', startMinutes: 14 * 60 + 30, cabinePairs: [
         { cabineHome: "10", cabineAway: "5" }
+    ]},
+        { fieldName: 'C', startMinutes: 17 * 60, cabinePairs: [
+        { cabineHome: "8", cabineAway: "2" }
     ]},
 ];
