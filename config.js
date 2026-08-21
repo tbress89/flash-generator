@@ -196,9 +196,9 @@ const teamConfig = [
         cabineHome: "-", cabineAway: "-"
     }},
     { teamId: "378963", internalName: "U9 Bayern München", cabinesBefore13h: { 
-        cabineHome: "10", cabineAway: "5"
+        cabineHome: "-", cabineAway: "-"
     }, cabinesAfter13h: { 
-        cabineHome: "10", cabineAway: "5"
+        cabineHome: "-", cabineAway: "-"
     }},
     { teamId: "378962", internalName: "U9 Eintr. Frankfurt", cabinesBefore13h: { 
         cabineHome: "-", cabineAway: "-"
@@ -206,39 +206,39 @@ const teamConfig = [
         cabineHome: "-", cabineAway: "-"
     }},
     { teamId: "378960", internalName: "U8 Porto", cabinesBefore13h: { 
-        cabineHome: "8L", cabineAway: "2L"
+        cabineHome: "-", cabineAway: "-"
     }, cabinesAfter13h: { 
-        cabineHome: "8L", cabineAway: "2L"
+        cabineHome: "-", cabineAway: "-"
     }},
     { teamId: "378959", internalName: "U8 Sporting", cabinesBefore13h: { 
-        cabineHome: "11L", cabineAway: "6L"
+        cabineHome: "-", cabineAway: "-"
     }, cabinesAfter13h: { 
-        cabineHome: "11L", cabineAway: "6L"
+        cabineHome: "-", cabineAway: "-"
     }},
     { teamId: "378958", internalName: "U8 Braga", cabinesBefore13h: { 
-        cabineHome: "11R", cabineAway: "6R"
+        cabineHome: "-", cabineAway: "-"
     }, cabinesAfter13h: { 
-        cabineHome: "11R", cabineAway: "6R"
+        cabineHome: "-", cabineAway: "-"
     }},
     { teamId: "378955", internalName: "U7 PSV", cabinesBefore13h: { 
-        cabineHome: "8L", cabineAway: "2L"
+        cabineHome: "-", cabineAway: "-"
     }, cabinesAfter13h: { 
-        cabineHome: "8L", cabineAway: "2L"
+        cabineHome: "-", cabineAway: "-"
     }},
     { teamId: "378957", internalName: "U7 Feyenoord", cabinesBefore13h: { 
-        cabineHome: "8R", cabineAway: "2R"
+        cabineHome: "-", cabineAway: "-"
     }, cabinesAfter13h: { 
-        cabineHome: "8R", cabineAway: "2R"
+        cabineHome: "-", cabineAway: "-"
     }},
     { teamId: "378953", internalName: "U6 FC Kopenhagen", cabinesBefore13h: { 
-        cabineHome: "8L", cabineAway: "2L"
+        cabineHome: "-", cabineAway: "-"
     }, cabinesAfter13h: { 
-        cabineHome: "8L", cabineAway: "2L"
+        cabineHome: "-", cabineAway: "-"
     }},
     { teamId: "378954", internalName: "U6 Brondby", cabinesBefore13h: { 
-        cabineHome: "11R", cabineAway: "6R"
+        cabineHome: "-", cabineAway: "-"
     }, cabinesAfter13h: { 
-        cabineHome: "11R", cabineAway: "6R"
+        cabineHome: "-", cabineAway: "-"
     }},
 ];
 
@@ -316,4 +316,45 @@ function getCabineUsageDurationMinutes(internalName) {
 const CABINE_FREE_BEFORE_MATCH_MINUTES = 15;
 
 // The valid cabine numbers that can be picked from the editable cabine dropdowns (there is no cabine 3).
-const CABINE_DROPDOWN_OPTIONS = ["1", "2", "2L", "2R", "4", "5", "6", "6L", "6R", "7", "8", "8L", "8R", "9", "10", "11", "11L", "11R", "tennis"];
+const CABINE_DROPDOWN_OPTIONS = ["1", "2", "4", "5", "6", "7", "7L", "7R", "8", "8L", "8R", "9", "9L", "9R", "10", "10L", "10R", "11", "11L", "11R", "tennis"];
+
+// On Saturdays, some field + kickoff-time combinations use a completely fixed cabine plan
+// instead of each team's own configured cabine preference (which is why several youth teams
+// above have "-" configured - they're covered by this table instead). Each entry lists the
+// field, the kickoff time (as minutes-from-midnight, e.g. 9:30 -> 570) and one cabine pair per
+// match expected in that exact slot; pairs are handed out in the order the matches appear for
+// that field.
+const SATURDAY_CABINE_OVERRIDES = [
+    { fieldName: 'A-KGV', startMinutes: 9 * 60, cabinePairs: [
+        { cabineHome: "8L", cabineAway: "2" },
+        { cabineHome: "8R", cabineAway: "5" }
+    ]},
+    { fieldName: 'A-KGV', startMinutes: 10 * 60 + 30, cabinePairs: [
+        { cabineHome: "8L", cabineAway: "2" },
+        { cabineHome: "8R", cabineAway: "5" }
+    ]},
+    { fieldName: 'A-KGV', startMinutes: 17 * 60, cabinePairs: [
+        { cabineHome: "10", cabineAway: "5" },
+    ]},
+    { fieldName: 'B-KGV', startMinutes: 9 * 60 + 30, cabinePairs: [
+        { cabineHome: "9", cabineAway: "1" },
+        { cabineHome: "7", cabineAway: "4" }
+    ]},
+    { fieldName: 'B-KGV', startMinutes: 11 * 60 + 30, cabinePairs: [
+        { cabineHome: "9", cabineAway: "1" },
+        { cabineHome: "7", cabineAway: "4" }
+    ]},
+    { fieldName: 'B-KGV', startMinutes: 14 * 60 + 30, cabinePairs: [
+        { cabineHome: "9", cabineAway: "1" },
+        { cabineHome: "7", cabineAway: "4" }
+    ]},
+    { fieldName: 'C', startMinutes: 11 * 60, cabinePairs: [
+        { cabineHome: "10", cabineAway: "5" }
+    ]},
+        { fieldName: 'C', startMinutes: 14 * 60, cabinePairs: [
+        { cabineHome: "10", cabineAway: "5" }
+    ]},
+    { fieldName: 'C', startMinutes: 14 * 60 + 30, cabinePairs: [
+        { cabineHome: "10", cabineAway: "5" }
+    ]},
+];

@@ -23,6 +23,32 @@ function parseCabineTokens(cabineStr) {
         .filter(token => token && token !== '-');
 }
 
+// On Saturdays, overrides the cabine assignment for matches that fall into one of the fixed
+// field + kickoff-time slots defined in SATURDAY_CABINE_OVERRIDES, replacing whatever cabine
+// preference the team itself has configured. Does nothing on any other day of the week.
+function applySaturdayCabineOverrides(dateGroup) {
+    const matchesForDate = Object.values(dateGroup.fields).flat();
+    if (matchesForDate.length === 0) return;
+
+    const isSaturday = new Date(matchesForDate[0].startTime).getDay() === 6;
+    if (!isSaturday) return;
+
+    SATURDAY_CABINE_OVERRIDES.forEach(override => {
+        const matchesInField = dateGroup.fields[override.fieldName];
+        if (!matchesInField) return;
+
+        const matchesInSlot = matchesInField.filter(match => match.startMinutes === override.startMinutes);
+
+        matchesInSlot.forEach((match, index) => {
+            const cabinePair = override.cabinePairs[index];
+            if (!cabinePair) return;
+
+            match.cabineHome = cabinePair.cabineHome;
+            match.cabineAway = cabinePair.cabineAway;
+        });
+    });
+}
+
 // Given a flat list of cabine usage entries (each with at least a `cabine`, `startMinutes`
 // and `endMinutes`), finds every pair of entries that use the same cabine at overlapping
 // times.

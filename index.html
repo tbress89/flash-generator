@@ -302,6 +302,11 @@
                 sortedDateKeys.forEach(dateKey => {
                     const dateGroup = groupedMatches[dateKey];
 
+                    // On Saturdays, some field + time slots use a fixed cabine plan instead of
+                    // each team's own configured preference - apply that before anything else
+                    // reads match.cabineHome / match.cabineAway for this date.
+                    applySaturdayCabineOverrides(dateGroup);
+
                     // Draw the large purple/grey header for the day
                     const dateTitle = document.createElement('div');
                     dateTitle.className = 'date-title-bar';
