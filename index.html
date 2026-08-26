@@ -134,7 +134,16 @@
                     const getTeamCalendarUrl = `https://datalake-prod2018.rbfa.be/graphql?operationName=GetTeamCalendar&variables={"teamId":"${team.teamId}","language":"nl","sortByDate":"asc"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"3f0441e6723b9852b4f0cff2c872f4aa674c5de2d23589efc70c7a4ffb7f6383"}}`;
 
                     try {
-                        const response = await fetch(getTeamCalendarUrl);
+                        const response = await fetch(
+                            getTeamCalendarUrl,
+                            {
+                                "headers": {
+                                    "accept": "*/*",
+                                    "content-type": "application/json",
+                                },
+                                "method": "GET"
+                            }
+                        );
                         const data = await response.json();
 
                         if (data && data.data && data.data.teamCalendar) {
@@ -180,7 +189,15 @@
                 const getMatchDetailUrl = `https://datalake-prod2018.rbfa.be/graphql?operationName=GetMatchDetail&variables={"matchId":"${match.id}","language":"nl"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"cd8867b845c206fe7aa75c1ebf7b53cbda0ff030253a45e2e2b4bcc13ee46c9a"}}`;
 
                 try {
-                    const matchResponse = await fetch(getMatchDetailUrl);
+                    const matchResponse = await fetch(
+                        getMatchDetailUrl,
+                        {
+                            "headers": {
+                                "accept": "*/*",
+                                "content-type": "application/json",
+                            },
+                            "method": "GET"
+                        });
                     const matchData = await matchResponse.json();
 
                     const pitchCode = matchData.data.matchDetail ? matchData.data.matchDetail.location.pitchCode : null;
