@@ -31,7 +31,7 @@
         <p style="text-align: center;">Loading matches...</p>
     </div>
 
-    <div class="footer-banner">
+    <div id="footer-banner" class="footer-banner">
         <img id="footer-sponsor-img" src="images/sponsors.png" alt="Sponsors">
     </div>
 
@@ -223,13 +223,15 @@
         // variants, alternating by the day-of-month being even or odd. Any other selection
         // (midweek, Friday, Sunday, ...) keeps using the full sponsors banner.
         function updateSponsorBanner(startDate, endDate) {
+            const footerBanner = document.getElementById('footer-banner');
             const sponsorImg = document.getElementById('footer-sponsor-img');
             const startDateObj = new Date(`${startDate}T00:00:00`);
             const isSingleSaturday = startDate === endDate && startDateObj.getDay() === 6;
 
             if (isSingleSaturday) {
-                const isEvenDate = startDateObj.getDate() % 2 === 0;
-                sponsorImg.src = isEvenDate ? 'images/sponsors_small_2.png' : 'images/sponsors_small_1.png';
+                // const isEvenDate = startDateObj.getDate() % 2 === 0;
+                // sponsorImg.src = isEvenDate ? 'images/sponsors_small_2.png' : 'images/sponsors_small_1.png';
+                footerBanner.style.display = 'none';
             } else {
                 sponsorImg.src = 'images/sponsors.png';
             }
@@ -431,7 +433,7 @@
                                     <tr>
                                         <td>${shift.startTime} - ${shift.endTime}</td>
                                         <td>${shift.team || '-'}</td>
-                                        <td>${shift.amountOfParents != null ? `${shift.amountOfParents} ouder(s)` : '-'}</td>
+                                        <td>${shift.amountOfParents != null ? `${shift.amountOfParents} ${shift.amountOfParents === 1 ? 'ouder' : 'ouders'}` : '-'}</td>
                                     </tr>
                                 `).join('');
 

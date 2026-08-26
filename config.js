@@ -242,39 +242,489 @@ const teamConfig = [
     }},
 ];
 
-const barServiceConfig = [];
-// const barServiceConfig = [
-//     {
-//         date: "05/09/2026",
-//         playerShifts: [
-//             { startTime: "12:00", endTime: "15:00", team: "Dames 1", player: "Alice" },
-//             { startTime: "15:00", endTime: "18:00", team: "Heren 1", player: "Bob" },
-//             { startTime: "18:00", endTime: "21:00", team: "Veteranen", player: "John" }
-//         ],
-//         teamShifts: [
-//             { startTime: "08:30", endTime: "11:00", team: "U11 Rangers", amountOfParents: 3 },
-//             { startTime: "11:00", endTime: "14:00", team: "U14 Madrid", amountOfParents: 3 }
+const barServiceConfig = [
+  {
+    "date": "05/09/2026",
+    "playerShifts": [],
+    "teamShifts": [
+      {
+        "startTime": "08:30",
+        "endTime": "11:00",
+        "team": "U14 Madrid",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "11:00",
+        "endTime": "13:30",
+        "team": "U12 Sampdoria",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "16:00",
+        "team": "U15 Celta Wit",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "16:00",
+        "endTime": "18:30",
+        "team": "U21 BD",
+        "amountOfParents": 1
+      }
+    ]
+  },
+  {
+    "date": "12/09/2026",
+    "playerShifts": [],
+    "teamShifts": [
+      {
+        "startTime": "08:30",
+        "endTime": "11:00",
+        "team": "U11 Celtic",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "11:00",
+        "endTime": "13:30",
+        "team": "U15 Celta Paars",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "16:00",
+        "team": "U15 Getafe",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "16:00",
+        "endTime": "18:30",
+        "team": "U16 Benfica",
+        "amountOfParents": 1
+      }
+    ]
+  },
+  {
+    "date": "19/09/2026",
+    "playerShifts": [],
+    "teamShifts": [
+      {
+        "startTime": "08:30",
+        "endTime": "11:00",
+        "team": "U10 Arsenal",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "11:00",
+        "endTime": "13:30",
+        "team": "U12 Inter Milaan",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "16:00",
+        "team": "U17 Lazio Roma",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "16:00",
+        "endTime": "18:30",
+        "team": "U19 St Etienne",
+        "amountOfParents": 1
+      }
+    ]
+  },
+  {
+    "date": "26/09/2026",
+    "playerShifts": [],
+    "teamShifts": [
+      {
+        "startTime": "08:30",
+        "endTime": "11:00",
+        "team": "U11 Rangers",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "11:00",
+        "endTime": "13:30",
+        "team": "MU20 Barcelona Girls",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "16:00",
+        "team": "U13 Man City",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "16:00",
+        "endTime": "18:30",
+        "team": "U19 PSG",
+        "amountOfParents": 1
+      }
+    ]
+  },
+  {
+    "date": "01/10/2026",
+    "playerShifts": [],
+    "teamShifts": [
+      {
+        "startTime": "08:30",
+        "endTime": "11:00",
+        "team": null,
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "11:00",
+        "endTime": "13:30",
+        "team": null,
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "16:00",
+        "team": null,
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "16:00",
+        "endTime": "18:30",
+        "team": "U15 Getafe",
+        "amountOfParents": 1
+      }
+    ]
+  },
+  {
+    "date": "03/10/2026",
+    "playerShifts": [],
+    "teamShifts": [
+      {
+        "startTime": "08:30",
+        "endTime": "11:00",
+        "team": "U10 Liverpool",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "11:00",
+        "endTime": "13:30",
+        "team": "U12 Napoli",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "16:00",
+        "team": "U17 AS Fiorentina",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "16:00",
+        "endTime": "18:30",
+        "team": "U21 BD",
+        "amountOfParents": 1
+      }
+    ]
+  },
+  {
+    "date": "10/10/2026",
+    "playerShifts": [],
+    "teamShifts": [
+      {
+        "startTime": "08:30",
+        "endTime": "11:00",
+        "team": "U9 Bayern München",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "11:00",
+        "endTime": "13:30",
+        "team": "U14 Madrid",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "16:00",
+        "team": "U15 Celta Wit",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "16:00",
+        "endTime": "18:30",
+        "team": "U19 PSG",
+        "amountOfParents": 1
+      }
+    ]
+  },
+  {
+    "date": "17/10/2026",
+    "playerShifts": [],
+    "teamShifts": [
+      {
+        "startTime": "08:30",
+        "endTime": "11:00",
+        "team": "U9 Bayer Leverkusen",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "11:00",
+        "endTime": "13:30",
+        "team": "U10 Chelsea",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "16:00",
+        "team": "U13 Man United",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "16:00",
+        "endTime": "18:30",
+        "team": "U16 Benfica",
+        "amountOfParents": 1
+      }
+    ]
+  },
+  {
+    "date": "24/10/2026",
+    "playerShifts": [],
+    "teamShifts": [
+      {
+        "startTime": "08:30",
+        "endTime": "11:00",
+        "team": "U9 Eintr. Frankfurt",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "11:00",
+        "endTime": "13:30",
+        "team": "U15 Celta Paars",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "16:00",
+        "team": "U13 Man City",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "16:00",
+        "endTime": "18:30",
+        "team": "U19 PSG",
+        "amountOfParents": 1
+      }
+    ]
+  },
+  {
+    "date": "31/10/2026",
+    "playerShifts": [],
+    "teamShifts": [
+      {
+        "startTime": "08:30",
+        "endTime": "11:00",
+        "team": "U7 Feyenoord",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "11:00",
+        "endTime": "13:30",
+        "team": "U14 Madrid",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "16:00",
+        "team": "U17 Lazio Roma",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "16:00",
+        "endTime": "18:30",
+        "team": "U19 St Etienne",
+        "amountOfParents": 1
+      }
+    ]
+  },
+  {
+    "date": "07/11/2026",
+    "playerShifts": [],
+    "teamShifts": [
+      {
+        "startTime": "08:30",
+        "endTime": "11:00",
+        "team": "U6 FC Kopenhagen",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "11:00",
+        "endTime": "13:30",
+        "team": "MU20 Barcelona Girls",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "16:00",
+        "team": "U13 Man United",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "16:00",
+        "endTime": "18:30",
+        "team": "U16 Benfica",
+        "amountOfParents": 1
+      }
+    ]
+  },
+  {
+    "date": "14/11/2026",
+    "playerShifts": [],
+    "teamShifts": [
+      {
+        "startTime": "08:30",
+        "endTime": "11:00",
+        "team": "U8 Porto",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "11:00",
+        "endTime": "13:30",
+        "team": "U12 Sampdoria",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "16:00",
+        "team": "U17 AS Fiorentina",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "16:00",
+        "endTime": "18:30",
+        "team": "U21 BD",
+        "amountOfParents": 1
+      }
+    ]
+  },
+  {
+    "date": "21/11/2026",
+    "playerShifts": [],
+    "teamShifts": [
+      {
+        "startTime": "08:30",
+        "endTime": "11:00",
+        "team": "U8 Sporting",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "11:00",
+        "endTime": "13:30",
+        "team": "U12 Inter Milaan",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "16:00",
+        "team": "U15 Celta Wit",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "16:00",
+        "endTime": "18:30",
+        "team": "U19 PSG",
+        "amountOfParents": 1
+      }
+    ]
+  },
+  {
+    "date": "28/11/2026",
+    "playerShifts": [],
+    "teamShifts": [
+      {
+        "startTime": "08:30",
+        "endTime": "11:00",
+        "team": "U8 Braga",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "11:00",
+        "endTime": "13:30",
+        "team": "U12 Napoli",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "16:00",
+        "team": "U15 Getafe",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "16:00",
+        "endTime": "18:30",
+        "team": "U19 St Etienne",
+        "amountOfParents": 1
+      }
+    ]
+  },
+  {
+    "date": "05/12/2026",
+    "playerShifts": [],
+    "teamShifts": [
+      {
+        "startTime": "08:30",
+        "endTime": "11:00",
+        "team": "MU13 Ajax Girls",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "11:00",
+        "endTime": "13:30",
+        "team": "U12 Sampdoria",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "16:00",
+        "team": "U17 Lazio Roma",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "16:00",
+        "endTime": "18:30",
+        "team": "U21 BD",
+        "amountOfParents": 1
+      }
+    ]
+  },
+  {
+    "date": "12/12/2026",
+    "playerShifts": [],
+    "teamShifts": [
+      {
+        "startTime": "08:30",
+        "endTime": "11:00",
+        "team": "U12 Sampdoria",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "11:00",
+        "endTime": "13:30",
+        "team": "U10 Chelsea",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "13:30",
+        "endTime": "16:00",
+        "team": "U12 Inter Milaan",
+        "amountOfParents": 3
+      },
+      {
+        "startTime": "16:00",
+        "endTime": "18:30",
+        "team": null,
+        "amountOfParents": 1
+      }
+    ]
+  }
+];
 
-//         ]
-//     },
-//     {
-//         date: "06/09/2026",
-//         playerShifts: [
-//             { startTime: "12:00", endTime: "15:00", team: "Dames 1", player: "Alice" },
-//             { startTime: "15:00", endTime: "18:00", team: "Heren 1", player: "Bob" }
-//         ],
-//         teamShifts: []
-//     },
-//     {
-//         date: "19/09/2026",
-//         playerShifts: [],
-//         teamShifts: [
-//             { startTime: "08:30", endTime: "11:00", team: "U11 Rangers", amountOfParents: 3 },
-//             { startTime: "11:00", endTime: "14:00", team: "U14 Madrid", amountOfParents: 3 }
-
-//         ]
-//     },
-// ];
 
 const cabineCleaningConfig = [];
 // const cabineCleaningConfig = [
