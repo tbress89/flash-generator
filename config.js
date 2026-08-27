@@ -245,7 +245,12 @@ const teamConfig = [
 const barServiceConfig = [
   {
     "date": "05/09/2026",
-    "playerShifts": [],
+    "playerShifts": [
+      { "startTime": "09:00", "endTime": "13:00", "team": "Matisse Loveniers", "player": "Heren 8" },
+      { "startTime": "11:00", "endTime": "15:00", "team": "Jonas Marichal", "player": "Heren 8" },
+      { "startTime": "14:00", "endTime": "18:00", "team": "Michiel Mattheeusen", "player": "Heren 8" },
+      { "startTime": "16:00", "endTime": "20:00", "team": "Kobe Peter Van Elsen", "player": "Heren 8" },
+    ],
     "teamShifts": [
       {
         "startTime": "08:30",
@@ -273,9 +278,24 @@ const barServiceConfig = [
       }
     ]
   },
+    {
+    "date": "06/09/2026",
+    "playerShifts": [
+        { "startTime": "10:30", "endTime": "14:30", "team": "Lies Noe", "player": "D1" },
+        { "startTime": "12:30", "endTime": "16:30", "team": "Anneleen Goethals", "player": "D1" },
+        { "startTime": "14:30", "endTime": "18:30", "team": "Lisa Baekelandt", "player": "D2" },
+        { "startTime": "16:00", "endTime": "20:00", "team": "Katharina Gremminger", "player": "D2" }
+    ],
+    "teamShifts": []
+  },
   {
     "date": "12/09/2026",
-    "playerShifts": [],
+    "playerShifts": [
+      { "startTime": "09:00", "endTime": "13:00", "team": "Luka Revijn", "player": "H4" },
+      { "startTime": "11:00", "endTime": "15:00", "team": "Xander Rooman", "player": "H4" },
+      { "startTime": "14:00", "endTime": "18:00", "team": "Kenan Salim", "player": "H4" },
+      { "startTime": "16:00", "endTime": "20:00", "team": "Andrew Sneij", "player": "H4" }
+    ],
     "teamShifts": [
       {
         "startTime": "08:30",
@@ -303,9 +323,23 @@ const barServiceConfig = [
       }
     ]
   },
+    {
+    "date": "13/09/2026",
+    "playerShifts": [
+        { "startTime": "10:30", "endTime": "14:30", "team": "Lina De Roeck", "player": "D2" },
+        { "startTime": "13:00", "endTime": "17:00", "team": "Benny Bracke", "player": "Vets" },
+        { "startTime": "16:00", "endTime": "20:00", "team": "Joris Beens", "player": "Vets" }
+    ],
+    "teamShifts": []
+  },
   {
     "date": "19/09/2026",
-    "playerShifts": [],
+    "playerShifts": [
+        { "startTime": "09:00", "endTime": "13:00", "team": "David Janssen", "player": "H1&2" },
+        { "startTime": "11:00", "endTime": "15:00", "team": "Thibaut Debaenst", "player": "H1&2" },
+        { "startTime": "14:00", "endTime": "18:00", "team": "Jeroen Demarbaix", "player": "H1&2" },
+        { "startTime": "16:00", "endTime": "20:00", "team": "Maarten Demarbaix", "player": "H1&2" }
+    ],
     "teamShifts": [
       {
         "startTime": "08:30",
@@ -333,9 +367,24 @@ const barServiceConfig = [
       }
     ]
   },
+    {
+    "date": "20/09/2026",
+    "playerShifts": [
+        { "startTime": "10:30", "endTime": "14:30", "team": "Margot Michielsen", "player": "D2" },
+        { "startTime": "13:00", "endTime": "17:00", "team": "Sara Kockx", "player": "D2" },
+        { "startTime": "14:30", "endTime": "18:30", "team": "Ann-Sophie Leroy", "player": "D2" },
+        { "startTime": "16:00", "endTime": "20:00", "team": "Heleen Luyckx", "player": "D2" }
+    ],
+    "teamShifts": []
+  },
   {
     "date": "26/09/2026",
-    "playerShifts": [],
+    "playerShifts": [
+        { "startTime": "09:00", "endTime": "13:00", "team": "Viktor Joossens", "player": "H9" },
+        { "startTime": "11:00", "endTime": "15:00", "team": "Leto Lambrigts", "player": "H9" },
+        { "startTime": "14:00", "endTime": "18:00", "team": "Stan Leysens", "player": "H9" },
+        { "startTime": "16:00", "endTime": "20:00", "team": "Rayan Meljado", "player": "H9" }
+    ],
     "teamShifts": [
       {
         "startTime": "08:30",
@@ -362,6 +411,16 @@ const barServiceConfig = [
         "amountOfParents": 1
       }
     ]
+  },
+  {
+    "date": "27/09/2026",
+    "playerShifts": [
+        { "startTime": "10:30", "endTime": "14:30", "team": "Evelien Jorens", "player": "D2" },
+        { "startTime": "13:00", "endTime": "17:00", "team": "Jordy Cathoir", "player": "Vets" },
+        { "startTime": "14:30", "endTime": "18:30", "team": "Stefaan Castelein", "player": "Vets" },
+        { "startTime": "16:00", "endTime": "20:00", "team": "Johan Herstraete", "player": "Vets" }
+    ],
+    "teamShifts": []
   },
   {
     "date": "01/10/2026",
