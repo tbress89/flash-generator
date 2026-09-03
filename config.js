@@ -61,7 +61,7 @@ const teamConfig = [
     }, cabinesAfter13h: { 
         cabineHome: "9", cabineAway: "4"
     }},
-    { teamId: "367647", internalName: "Heren 7", cabinesBefore13h: { 
+    { teamId: "367648", internalName: "Heren 7", cabinesBefore13h: { 
         cabineHome: "10", cabineAway: "7"
     }, cabinesAfter13h: { 
         cabineHome: "10", cabineAway: "7"
@@ -76,7 +76,7 @@ const teamConfig = [
     }, cabinesAfter13h: { 
         cabineHome: "10", cabineAway: "7"
     }},
-    { teamId: "367648", internalName: "Heren 10", cabinesBefore13h: { 
+    { teamId: "367647", internalName: "Heren 10", cabinesBefore13h: { 
         cabineHome: "11", cabineAway: "8"
     }, cabinesAfter13h: { 
         cabineHome: "2", cabineAway: "6"
