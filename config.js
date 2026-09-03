@@ -62,9 +62,9 @@ const teamConfig = [
         cabineHome: "9", cabineAway: "4"
     }},
     { teamId: "367648", internalName: "Heren 7", cabinesBefore13h: { 
-        cabineHome: "10", cabineAway: "7"
+        cabineHome: "11", cabineAway: "8"
     }, cabinesAfter13h: { 
-        cabineHome: "10", cabineAway: "7"
+        cabineHome: "2", cabineAway: "6"
     }},
     { teamId: "364486", internalName: "Heren 8", cabinesBefore13h: { 
         cabineHome: "11", cabineAway: "6"
@@ -77,11 +77,11 @@ const teamConfig = [
         cabineHome: "10", cabineAway: "7"
     }},
     { teamId: "367647", internalName: "Heren 10", cabinesBefore13h: { 
-        cabineHome: "11", cabineAway: "8"
+        cabineHome: "10", cabineAway: "7"
     }, cabinesAfter13h: { 
-        cabineHome: "2", cabineAway: "6"
+        cabineHome: "10", cabineAway: "7"
     }},
-
+    
     // Vets
     { teamId: "364487", internalName: "Veteranen", cabinesBefore13h: { 
         cabineHome: "2", cabineAway: "6"
