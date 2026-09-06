@@ -401,7 +401,7 @@ const barServiceConfig = [
       {
         "startTime": "13:30",
         "endTime": "16:00",
-        "team": "U13 Man City",
+        "team": "U13 Man United",
         "amountOfParents": 3
       },
       {
@@ -531,7 +531,7 @@ const barServiceConfig = [
       {
         "startTime": "13:30",
         "endTime": "16:00",
-        "team": "U13 Man United",
+        "team": "U13 Man City",
         "amountOfParents": 3
       },
       {
