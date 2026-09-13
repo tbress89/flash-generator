@@ -177,8 +177,9 @@
                 const isWithinDates = (matchDate >= myStartDate && matchDate <= myEndDate);
                 const isHomeGame = (match.homeTeam && match.homeTeam.clubId === "8175");
                 const isNotGeneralForfeit = (match.state !== "generalForfeit");
+                const isNotHeren4 = (match.homeTeam && match.homeTeam.name !== "FC Ik Dien C");
 
-                return isWithinDates && isHomeGame && isNotGeneralForfeit;
+                return isWithinDates && isHomeGame && isNotGeneralForfeit && isNotHeren4;
             });
 
             // 3. Remove duplicate matches (same id), keeping only the first occurrence
