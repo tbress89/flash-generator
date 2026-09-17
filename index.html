@@ -44,6 +44,104 @@
     <script>
         let cachedTeamCalendars = null;
 
+        // Fetches stored internal referee names from the Google Sheets backend
+        // for a list of match IDs. Returns a map of matchId -> refereeName.
+        async function fetchInternalReferees(matchIds) {
+            if (!matchIds || matchIds.length === 0) return {};
+            try {
+                const url = `${REFEREE_API_URL}?matchIds=${matchIds.join(',')}`;
+                const response = await fetch(url);
+                return await response.json();
+            } catch (err) {
+                console.error('Failed to fetch internal referees:', err);
+                return {};
+            }
+        }
+
+        // Saves (or deletes, if empty) an internal referee assignment to the
+        // Google Sheets backend. Fire-and-forget; errors are logged but don't
+        // block the UI.
+        function saveInternalReferee(matchId, refereeName) {
+            fetch(REFEREE_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ matchId, refereeName })
+            }).catch(err => console.error('Failed to save internal referee:', err));
+        }
+
+        // Builds a referee cell: if an RBFA official is assigned, displays the referee's name as
+        // non-editable text; otherwise provides an editable input field with a whistle icon.
+        // If a stored internal referee name exists, the input is pre-filled.
+        // Saving happens on blur or Enter.
+        function buildRefereeCell(match) {
+            const td = document.createElement('td');
+            td.className = 'referee-cell';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'referee-wrapper';
+
+            const whistleIcon = document.createElement('img');
+            whistleIcon.src = 'referee-whistle.svg';
+            whistleIcon.className = 'referee-whistle-icon';
+            whistleIcon.alt = 'Scheidsrechter';
+            wrapper.appendChild(whistleIcon);
+
+            if (match && match.refereeName) {
+                // RBFA-assigned referee — show as non-editable text
+                wrapper.classList.add('has-referee');
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'referee-name';
+                nameSpan.textContent = match.refereeName;
+                wrapper.appendChild(nameSpan);
+            } else {
+                // No RBFA referee — show editable input for internal assignment
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'referee-input';
+                input.placeholder = 'scheidsrechter';
+
+                // Pre-fill with stored internal referee name if available
+                if (match && match.internalRefereeName) {
+                    input.value = match.internalRefereeName;
+                }
+
+                wrapper.classList.toggle('has-referee', !!input.value.trim());
+
+                const printText = document.createElement('span');
+                printText.className = 'referee-print-text';
+                printText.textContent = input.value;
+
+                input.addEventListener('input', () => {
+                    printText.textContent = input.value;
+                    wrapper.classList.toggle('has-referee', !!input.value.trim());
+                });
+
+                // Save the referee name when the user leaves the field or presses Enter
+                let lastSavedValue = input.value;
+
+                function saveIfChanged() {
+                    const currentValue = input.value.trim();
+                    if (currentValue !== lastSavedValue) {
+                        lastSavedValue = currentValue;
+                        saveInternalReferee(match.id, currentValue);
+                    }
+                }
+
+                input.addEventListener('blur', saveIfChanged);
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        input.blur();
+                    }
+                });
+
+                wrapper.appendChild(input);
+                wrapper.appendChild(printText);
+            }
+
+            td.appendChild(wrapper);
+            return td;
+        }
+
         // Builds an editable cabine dropdown (plus a hidden plain-text twin used only when
         // printing) for a single cabine slot (cabineHome or cabineAway) of a match. Editing
         // the dropdown updates the match's cabine value, keeps the print text in sync, and
@@ -208,13 +306,25 @@
 
                     const pitchCode = matchData.data.matchDetail ? matchData.data.matchDetail.location.pitchCode : null;
 
+                    let refereeName = null;
+                    const officials = matchData?.data?.matchDetail?.officials;
+                    if (officials && officials.length > 0 && officials[0]) {
+                        const firstName = officials[0].firstName ? officials[0].firstName.trim() : '';
+                        const lastName = officials[0].lastName ? officials[0].lastName.trim() : '';
+                        const fullName = `${firstName} ${lastName}`.trim();
+                        if (fullName) {
+                            refereeName = fullName;
+                        }
+                    }
+
                     return {
                         ...match,
-                        fieldName: pitchCodeToFieldName[pitchCode] || null
+                        fieldName: pitchCodeToFieldName[pitchCode] || null,
+                        refereeName: refereeName
                     };
                 } catch (err) {
                     console.error(`Failed to fetch match detail for match ${match.id}:`, err);
-                    return { ...match, fieldName: null };
+                    return { ...match, fieldName: null, refereeName: null };
                 }
             }));
 
@@ -256,6 +366,18 @@
                 window.history.pushState({ path: newUrl }, '', newUrl);
 
                 const matches = await fetchRbfaMatches(startDate, endDate);
+
+                // Fetch stored internal referee names for matches that don't have
+                // an RBFA-assigned official, so we can pre-fill their input fields.
+                const matchIdsWithoutReferee = matches
+                    .filter(m => !m.refereeName)
+                    .map(m => m.id);
+                const internalReferees = await fetchInternalReferees(matchIdsWithoutReferee);
+                matches.forEach(match => {
+                    if (!match.refereeName && internalReferees[match.id]) {
+                        match.internalRefereeName = internalReferees[match.id];
+                    }
+                });
 
                 listContainer.innerHTML = ''; 
 
@@ -374,15 +496,20 @@
                         dateGroup.fields[fieldName].forEach(match => {
                             const tr = document.createElement('tr');
 
-                            const seriesName = match.series ? match.series.name : '';
+                            tr.appendChild(buildRefereeCell(match));
 
-                            // Combine the internal name and series if needed, or just map them to the columns
-                            tr.innerHTML = `
-                                <td>${seriesName}</td>
-                                <td>${match.internalName}</td>
-                                <td>${match.awayTeamName}</td>
-                                <td class="center-text">${match.timeText}</td>
-                            `;
+                            const homeTeamTd = document.createElement('td');
+                            homeTeamTd.textContent = match.internalName;
+                            tr.appendChild(homeTeamTd);
+
+                            const awayTeamTd = document.createElement('td');
+                            awayTeamTd.textContent = match.awayTeamName;
+                            tr.appendChild(awayTeamTd);
+
+                            const timeTd = document.createElement('td');
+                            timeTd.className = 'center-text';
+                            timeTd.textContent = match.timeText;
+                            tr.appendChild(timeTd);
 
                             tr.appendChild(buildCabineCell(match, 'cabineHome', dateGroup, warningDiv));
                             tr.appendChild(buildCabineCell(match, 'cabineAway', dateGroup, warningDiv));

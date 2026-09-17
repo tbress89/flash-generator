@@ -1,3 +1,8 @@
+// URL of the deployed Google Apps Script web app for internal referee storage.
+// Replace the placeholder below with your actual deployment URL after deploying
+// the script from google-apps-script/referee-storage.gs.
+const REFEREE_API_URL = 'https://script.google.com/macros/s/AKfycbylQXFLxtKASmHWdWE9-LMDWkp48wmaAqXrHPi9O07b_H5AZ6lBoVg-1SphJ3q_sruD4g/exec';
+
 const teamConfig = [
     // Dames
     { teamId: "364085", internalName: "Dames 1", cabinesBefore13h: { 

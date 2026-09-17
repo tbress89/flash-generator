@@ -190,6 +190,49 @@ button {
     display: none;
 }
 
+/* Editable referee input styling */
+.referee-cell {
+    vertical-align: middle;
+}
+
+.referee-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.referee-whistle-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.referee-name {
+    font-size: 1em;
+}
+
+.referee-input {
+    width: 100%;
+    min-width: 90px;
+    max-width: 140px;
+    padding: 3px 6px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.referee-input:focus {
+    border-color: var(--flash-purple);
+    outline: none;
+}
+
+.referee-print-text {
+    display: none;
+}
+
 /* Hide the header banner on small/mobile screens (still shown when printing) */
 @media screen and (max-width: 768px) {
     .header-banner { display: none; }
@@ -244,4 +287,11 @@ button {
     /* Render cabine dropdowns as plain text when printing */
     .cabine-select { display: none; }
     .cabine-print-text { display: inline; }
+
+    /* Render referee input as plain text when printing */
+    .referee-input { display: none; }
+    .referee-print-text { display: inline; }
+
+    /* Hide the whistle icon when printing if no referee is filled in */
+    .referee-wrapper:not(.has-referee) .referee-whistle-icon { display: none !important; }
 }
