@@ -43,6 +43,7 @@
     <script src="date-utils.js"></script>
     <script>
         let cachedTeamCalendars = null;
+        const cachedMatchDetails = {};
 
         // Fetches stored internal referee names from the Google Sheets backend
         // for a list of match IDs. Returns a map of matchId -> refereeName.
@@ -288,8 +289,17 @@
                 return true;
             });
 
-            // 4. Only NOW enrich the (already filtered) matches with their field name
+            // 4. Only NOW enrich the (already filtered) matches with their field name and referee
             const enrichedMatches = await Promise.all(uniqueMatches.map(async match => {
+                if (cachedMatchDetails[match.id]) {
+                    const cached = cachedMatchDetails[match.id];
+                    return {
+                        ...match,
+                        fieldName: cached.fieldName,
+                        refereeName: cached.refereeName
+                    };
+                }
+
                 const getMatchDetailUrl = `https://datalake-prod2018.rbfa.be/graphql?operationName=GetMatchDetail&variables={"matchId":"${match.id}","language":"nl"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"cd8867b845c206fe7aa75c1ebf7b53cbda0ff030253a45e2e2b4bcc13ee46c9a"}}`;
 
                 try {
@@ -317,9 +327,16 @@
                         }
                     }
 
+                    const fieldName = pitchCodeToFieldName[pitchCode] || null;
+
+                    cachedMatchDetails[match.id] = {
+                        fieldName: fieldName,
+                        refereeName: refereeName
+                    };
+
                     return {
                         ...match,
-                        fieldName: pitchCodeToFieldName[pitchCode] || null,
+                        fieldName: fieldName,
                         refereeName: refereeName
                     };
                 } catch (err) {

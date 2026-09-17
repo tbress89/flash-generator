@@ -10,12 +10,6 @@ const teamConfig = [
     }, cabinesAfter13h: { 
         cabineHome: "11", cabineAway: "8"
     }},
-
-    { teamId: "364085", internalName: "Dames 1", cabinesBefore13h: { 
-        cabineHome: "11", cabineAway: "8"
-    }, cabinesAfter13h: { 
-        cabineHome: "11", cabineAway: "8"
-    }},
     { teamId: "364484", internalName: "Dames 2", cabinesBefore13h: { 
         cabineHome: "6", cabineAway: "2"
     }, cabinesAfter13h: { 
