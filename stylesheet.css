@@ -180,10 +180,36 @@ button {
 /* Center the time and locker room columns */
 .center-text { text-align: center !important; }
 
+/* Table column width and spacing adjustments */
+.referee-cell,
+.referee-col {
+    width: 25%;
+    min-width: 175px;
+}
+
+.time-cell,
+.time-col {
+    width: 70px;
+    white-space: nowrap;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+}
+
+.cabine-cell,
+.cabine-col {
+    width: 68px;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+}
+
 /* Editable cabine dropdown shown on screen; its plain-text twin is only used when printing */
 .cabine-select {
-    font-size: 1em;
-    padding: 2px 4px;
+    font-size: 12px;
+    padding: 2px 2px;
+    width: 62px;
+    max-width: 64px;
+    box-sizing: border-box;
+    text-align: center;
 }
 
 .cabine-print-text {
@@ -199,6 +225,7 @@ button {
     display: flex;
     align-items: center;
     gap: 6px;
+    max-width: 200px;
 }
 
 .referee-whistle-icon {
@@ -214,8 +241,8 @@ button {
 
 .referee-input {
     width: 100%;
-    min-width: 90px;
-    max-width: 140px;
+    min-width: 110px;
+    max-width: 175px;
     padding: 3px 6px;
     font-size: 1em;
     border: 1px solid #ccc;

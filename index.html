@@ -148,7 +148,7 @@
         // retriggers the conflict check for that date.
         function buildCabineCell(match, cabineField, dateGroup, warningDiv) {
             const td = document.createElement('td');
-            td.className = 'center-text';
+            td.className = 'center-text cabine-cell';
 
             // Some teams (e.g. Heren 1) always use the same fixed cabine(s) and can't be edited.
             if (match.cabinesEditable === false) {
@@ -483,12 +483,12 @@
                         const fieldHeaderRow = document.createElement('tr');
                         fieldHeaderRow.className = 'field-header-row';
                         fieldHeaderRow.innerHTML = `
-                            <th>Terrein ${fieldName}</th>
-                            <th>Thuisploeg</th>
-                            <th>Bezoekers</th>
-                            <th class="center-text">uur</th>
-                            <th class="center-text">cabines<br>Ik Dien</th>
-                            <th class="center-text">cabines<br>Bezoekers</th>
+                            <th class="referee-col">Terrein ${fieldName}</th>
+                            <th class="team-col">Thuisploeg</th>
+                            <th class="team-col">Bezoekers</th>
+                            <th class="center-text time-col">uur</th>
+                            <th class="center-text cabine-col">cabines<br>Ik Dien</th>
+                            <th class="center-text cabine-col">cabines<br>Bezoekers</th>
                         `;
                         tbody.appendChild(fieldHeaderRow);
 
@@ -499,15 +499,17 @@
                             tr.appendChild(buildRefereeCell(match));
 
                             const homeTeamTd = document.createElement('td');
+                            homeTeamTd.className = 'team-col';
                             homeTeamTd.textContent = match.internalName;
                             tr.appendChild(homeTeamTd);
 
                             const awayTeamTd = document.createElement('td');
+                            awayTeamTd.className = 'team-col';
                             awayTeamTd.textContent = match.awayTeamName;
                             tr.appendChild(awayTeamTd);
 
                             const timeTd = document.createElement('td');
-                            timeTd.className = 'center-text';
+                            timeTd.className = 'center-text time-cell';
                             timeTd.textContent = match.timeText;
                             tr.appendChild(timeTd);
 
