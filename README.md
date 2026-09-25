@@ -12,3 +12,17 @@ A static, fully client-side web page that generates a printable schedule ("Flash
 4. Sort chronologically and render the results as a table, grouped by date and field.
 
 No backend/server is required — everything runs client-side.
+
+## Local development
+
+Do not open `index.html` directly from the filesystem. A `file://` page has the browser origin `null`, which can produce a different CORS response from the hosted site.
+
+From the repository root, run:
+
+```sh
+./serve-local.sh
+```
+
+Then open <http://localhost:8000/> in the browser. The helper serves the repository with Python's built-in HTTP server, giving the page the explicit origin `http://localhost:8000`.
+
+This does not bypass RBFA's CORS policy. If RBFA does not allow `http://localhost:8000`, local browser requests still need to use a server-side proxy or RBFA must allow the development origin.
