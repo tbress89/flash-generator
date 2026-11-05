@@ -234,7 +234,7 @@
             // 1. Fetch only if we haven't already cached the team calendars
             if (!cachedTeamCalendars) {
                 const fetchPromises = teamConfig.map(async (team) => {
-                    const getTeamCalendarUrl = `https://www.voetbalvlaanderen.be/graphql?operationName=GetTeamCalendar&variables={"teamId":"${team.teamId}","language":"nl","sortByDate":"asc"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"3f0441e6723b9852b4f0cff2c872f4aa674c5de2d23589efc70c7a4ffb7f6383"}}`;
+                    const getTeamCalendarUrl = `https://www.voetbalvlaanderen.be/graphql`;
 
                     try {
                         const response = await fetch(
@@ -255,7 +255,7 @@
                                     "extensions": {
                                         "persistedQuery": {
                                             "version": 1,
-                                            "sha256Hash": "3f0441e6723b9852b4f0cff2c872f4aa674c5de2d23589efc70c7a4ffb7f6383"
+                                            "sha256Hash": "5cc5fac5f4819eb5aba7e1961e46bb61105a99f234141f0f862a344bdc17b164"
                                         }
                                     }
                                 })
