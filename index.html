@@ -45,6 +45,47 @@
         let cachedTeamCalendars = null;
         const cachedMatchDetails = {};
 
+        const RBFA_GRAPHQL_URL = 'https://www.voetbalvlaanderen.be/graphql';
+        const RBFA_MAX_ATTEMPTS = 4;
+
+        // Calls an RBFA persisted GraphQL query and returns its `data` object. The API
+        // intermittently answers with HTTP 200 + `PersistedQueryNotFound` (some backend
+        // nodes don't know the query hash), so any response with `errors` or without
+        // `data` is treated as a failure and retried with a short backoff. Throws when
+        // all attempts fail, so callers never mistake a failure for an empty result.
+        async function rbfaQuery(operationName, variables, sha256Hash) {
+            let lastError;
+            for (let attempt = 1; attempt <= RBFA_MAX_ATTEMPTS; attempt++) {
+                try {
+                    const response = await fetch(RBFA_GRAPHQL_URL, {
+                        headers: {
+                            'accept': '*/*',
+                            'content-type': 'application/json',
+                        },
+                        method: 'POST',
+                        body: JSON.stringify({
+                            operationName,
+                            variables,
+                            extensions: { persistedQuery: { version: 1, sha256Hash } }
+                        })
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const json = await response.json();
+                    if (json.errors && json.errors.length > 0) {
+                        throw new Error(json.errors.map(e => e.message).join(', '));
+                    }
+                    if (!json.data) throw new Error('Response contained no data');
+                    return json.data;
+                } catch (err) {
+                    lastError = err;
+                    if (attempt < RBFA_MAX_ATTEMPTS) {
+                        await new Promise(resolve => setTimeout(resolve, 250 * attempt + Math.random() * 250));
+                    }
+                }
+            }
+            throw new Error(`${operationName} failed after ${RBFA_MAX_ATTEMPTS} attempts: ${lastError && lastError.message}`);
+        }
+
         // Fetches stored internal referee names from the Google Sheets backend
         // for a list of match IDs. Returns a map of matchId -> refereeName.
         async function fetchInternalReferees(matchIds) {
@@ -232,58 +273,41 @@
             const myEndDate = new Date(`${endDate}T23:59:59`);
 
             // 1. Fetch only if we haven't already cached the team calendars
-            if (!cachedTeamCalendars) {
+            let teamCalendars = cachedTeamCalendars;
+            const failedTeams = [];
+            if (!teamCalendars) {
                 const fetchPromises = teamConfig.map(async (team) => {
-                    const getTeamCalendarUrl = `https://www.voetbalvlaanderen.be/graphql`;
-
                     try {
-                        const response = await fetch(
-                            getTeamCalendarUrl,
-                            {
-                                "headers": {
-                                    "accept": "*/*",
-                                    "content-type": "application/json",
-                                },
-                                "method": "POST",
-                                "body": JSON.stringify({
-                                    "operationName": "GetTeamCalendar",
-                                    "variables": {
-                                        "teamId": team.teamId,
-                                        "language": "nl",
-                                        "sortByDate": "asc"
-                                    },
-                                    "extensions": {
-                                        "persistedQuery": {
-                                            "version": 1,
-                                            "sha256Hash": "5cc5fac5f4819eb5aba7e1961e46bb61105a99f234141f0f862a344bdc17b164"
-                                        }
-                                    }
-                                })
-                            }
+                        const data = await rbfaQuery(
+                            'GetTeamCalendar',
+                            { teamId: team.teamId, language: 'nl', sortByDate: 'asc' },
+                            '5cc5fac5f4819eb5aba7e1961e46bb61105a99f234141f0f862a344bdc17b164'
                         );
-                        const data = await response.json();
-
-                        if (data && data.data && data.data.teamCalendar) {
-                            return data.data.teamCalendar.map(match => ({
-                                ...match,
-                                internalName: team.internalName,
-                                cabinesBefore13h: team.cabinesBefore13h,
-                                cabinesAfter13h: team.cabinesAfter13h,
-                                cabinesEditable: team.cabinesEditable !== false
-                            }));
-                        }
+                        return (data.teamCalendar || []).map(match => ({
+                            ...match,
+                            internalName: team.internalName,
+                            cabinesBefore13h: team.cabinesBefore13h,
+                            cabinesAfter13h: team.cabinesAfter13h,
+                            cabinesEditable: team.cabinesEditable !== false
+                        }));
                     } catch (err) {
-                        console.error(`Failed to fetch team ${team.teamId}:`, err);
+                        console.error(`Failed to fetch team ${team.teamId} (${team.internalName}):`, err);
+                        failedTeams.push(team.internalName || team.teamId);
+                        return [];
                     }
-                    return [];
                 });
 
                 const results = await Promise.all(fetchPromises);
-                cachedTeamCalendars = results.flat();
+                teamCalendars = results.flat();
+
+                // Only cache a complete set; otherwise the next call retries everything
+                if (failedTeams.length === 0) {
+                    cachedTeamCalendars = teamCalendars;
+                }
             }
 
             // 2. Filter from the cache instead of fetching again
-            const filteredMatches = cachedTeamCalendars.filter(match => {
+            const filteredMatches = teamCalendars.filter(match => {
                 if (!match.startTime) return false;
 
                 const matchDate = new Date(match.startTime);
@@ -315,37 +339,17 @@
                     };
                 }
 
-                const getMatchDetailUrl = "https://www.voetbalvlaanderen.be/graphql";
-
                 try {
-                    const matchResponse = await fetch(
-                        getMatchDetailUrl,
-                        {
-                            "headers": {
-                                "accept": "*/*",
-                                "content-type": "application/json",
-                            },
-                            "method": "POST",
-                            "body": JSON.stringify({
-                                "operationName": "GetMatchDetail",
-                                "variables": {
-                                    "matchId": match.id,
-                                    "language": "nl"
-                                },
-                                "extensions": {
-                                    "persistedQuery": {
-                                        "version": 1,
-                                        "sha256Hash": "e4194e20528d04a046bd71ea20a044dbd445144b1104f5e6f5992cfdcf43a793"
-                                    }
-                                }
-                            })
-                        });
-                    const matchData = await matchResponse.json();
+                    const matchData = await rbfaQuery(
+                        'GetMatchDetail',
+                        { matchId: match.id, language: 'nl' },
+                        'e4194e20528d04a046bd71ea20a044dbd445144b1104f5e6f5992cfdcf43a793'
+                    );
 
-                    const pitchCode = matchData.data.matchDetail ? matchData.data.matchDetail.location.pitchCode : null;
+                    const pitchCode = matchData.matchDetail?.location?.pitchCode ?? null;
 
                     let refereeName = null;
-                    const officials = matchData?.data?.matchDetail?.officials;
+                    const officials = matchData.matchDetail?.officials;
                     if (officials && officials.length > 0 && officials[0]) {
                         const firstName = officials[0].firstName ? officials[0].firstName.trim() : '';
                         const lastName = officials[0].lastName ? officials[0].lastName.trim() : '';
@@ -376,7 +380,16 @@
             // 5. Sort the matches chronologically (earliest first)
             enrichedMatches.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
 
-            return enrichedMatches;
+            return { matches: enrichedMatches, failedTeams };
+        }
+
+        // Builds a visible warning listing the teams whose calendar could not be loaded,
+        // so an incomplete overview is never mistaken for a complete one.
+        function buildFailedTeamsWarning(failedTeams) {
+            const warning = document.createElement('p');
+            warning.style.cssText = 'text-align: center; color: #b00020; font-weight: bold; margin: 16px 0;';
+            warning.textContent = `Let op: de wedstrijden van ${failedTeams.length} ploeg(en) konden niet geladen worden (${failedTeams.join(', ')}). Herlaad de pagina om het opnieuw te proberen.`;
+            return warning;
         }
 
         // Picks the footer sponsor image: on a Zaterdag Flash (a single-day selection that
@@ -410,7 +423,7 @@
                 const newUrl = `?start=${startDate}&end=${endDate}`;
                 window.history.pushState({ path: newUrl }, '', newUrl);
 
-                const matches = await fetchRbfaMatches(startDate, endDate);
+                const { matches, failedTeams } = await fetchRbfaMatches(startDate, endDate);
 
                 // Fetch stored internal referee names for matches that don't have
                 // an RBFA-assigned official, so we can pre-fill their input fields.
@@ -424,10 +437,14 @@
                     }
                 });
 
-                listContainer.innerHTML = ''; 
+                listContainer.innerHTML = '';
+
+                if (failedTeams.length > 0) {
+                    listContainer.appendChild(buildFailedTeamsWarning(failedTeams));
+                }
 
                 if (!matches || matches.length === 0) {
-                    listContainer.innerHTML = '<p style="text-align: center; margin-top: 50px;">Geen thuiswedstrijden gevonden.</p>';
+                    listContainer.insertAdjacentHTML('beforeend', '<p style="text-align: center; margin-top: 50px;">Geen thuiswedstrijden gevonden.</p>');
                     return;
                 }
 
