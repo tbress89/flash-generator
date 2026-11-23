@@ -316,9 +316,8 @@
                 const isNotGeneralForfeit = (match.state !== "generalForfeit");
                 const isNotForfeitByOneTeam = (match.state !== "forfeitByOneTeam");
                 const isNotHeren4 = (match.homeTeam && match.homeTeam.name !== "FC Ik Dien C");
-                const isLocationKattenbroek = (match.location && match.location.name === "Kattenbroek");
 
-                return isWithinDates && isHomeGame && isNotGeneralForfeit && isNotForfeitByOneTeam && isNotHeren4 && isLocationKattenbroek;
+                return isWithinDates && isHomeGame && isNotGeneralForfeit && isNotForfeitByOneTeam && isNotHeren4;
             });
 
             // 3. Remove duplicate matches (same id), keeping only the first occurrence
