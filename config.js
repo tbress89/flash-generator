@@ -620,7 +620,7 @@ const barServiceConfig = [
       {
         "startTime": "13:30",
         "endTime": "16:00",
-        "team": "U13 Man United",
+        "team": "U15 Getafe",
         "amountOfParents": 3
       },
       {
@@ -710,7 +710,7 @@ const barServiceConfig = [
       {
         "startTime": "13:30",
         "endTime": "16:00",
-        "team": "U15 Getafe",
+        "team": "U13 Man United",
         "amountOfParents": 3
       },
       {
