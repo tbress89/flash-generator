@@ -369,18 +369,25 @@
                     return {
                         ...match,
                         fieldName: fieldName,
-                        refereeName: refereeName
+                        refereeName: refereeName,
+                        location: matchData.matchDetail?.location?.name
                     };
                 } catch (err) {
                     console.error(`Failed to fetch match detail for match ${match.id}:`, err);
-                    return { ...match, fieldName: null, refereeName: null };
+                    return { ...match, fieldName: null, refereeName: null, location: null };
                 }
             }));
 
-            // 5. Sort the matches chronologically (earliest first)
-            enrichedMatches.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+            // 5. Filter matches to only include those at the "Kattenbroek" location
+            const filteredEnrichedMatches = enrichedMatches.filter(match => {
+                console.log(match);
+                return match.location && match.location === "Kattenbroek";
+            });
 
-            return { matches: enrichedMatches, failedTeams };
+            // 6. Sort the matches chronologically (earliest first)
+            filteredEnrichedMatches.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+
+            return { matches: filteredEnrichedMatches, failedTeams };
         }
 
         // Builds a visible warning listing the teams whose calendar could not be loaded,
